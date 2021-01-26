@@ -23,25 +23,25 @@ public class DrinksService {
 
     public void retrieveAndSaveIngredients() {
         GetIngredientsResponse response = cocktailClient.getAllIngredients();
-
-        response
-                .ingredients
+        response.ingredients
                 .forEach(ingredient -> {
                     GetIngredientDetailsResponse res = cocktailClient.getIngredientDetails(ingredient.getName());
-
-                    res.getIngredients().forEach(ingredientData -> {
-
-                        Ingredient newIngredient = Ingredient.builder()
-                                .name(ingredientData.getName())
-                                .abv(ingredientData.getAbv())
-                                .description(ingredientData.getDescription())
-                                .isAlcoholic(ingredientData.getAlchohol() != null && ingredientData.getAlchohol().equals("Yes"))
-                                .build();
-
-                        log.info("Saving new ingredient {}", newIngredient);
-                        ingredientRepository.save(newIngredient);
-                    });
-
+                    res.getIngredients().forEach(this::saveNewIngredient);
                 });
     }
+
+    private Ingredient saveNewIngredient(ExtendedIngredient ingredient) {
+        Ingredient newIngredient = Ingredient.builder()
+                .name(ingredient.getName())
+                .abv(ingredient.getAbv())
+                .description(ingredient.getDescription())
+                .isAlcoholic(ingredient.getAlchohol() != null && ingredient.getAlchohol().equals("Yes"))
+                .build();
+
+        log.info("Saving new ingredient {}", newIngredient);
+        ingredientRepository.save(newIngredient);
+
+        return newIngredient;
+    }
+
 }
