@@ -2,15 +2,15 @@ package com.example.partystarter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Drink {
@@ -21,6 +21,11 @@ public class Drink {
 
     private String name;
 
+    @Column(length = 10000)
     private String recipe;
+
+    private int externalId;
+
+    private boolean alcoholic;
 
 }

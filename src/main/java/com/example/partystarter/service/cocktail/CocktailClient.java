@@ -1,5 +1,7 @@
 package com.example.partystarter.service.cocktail;
 
+import com.example.partystarter.model.cocktail.GetDrinkByIdResponse;
+import com.example.partystarter.model.cocktail.GetDrinksByIngredientResponse;
 import com.example.partystarter.model.cocktail.GetIngredientDetailsResponse;
 import com.example.partystarter.model.cocktail.GetIngredientsResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -15,4 +17,9 @@ public interface CocktailClient {
     @GetMapping(value = "/search.php")
     GetIngredientDetailsResponse getIngredientDetails(@RequestParam(value = "i") String ingredient);
 
+    @GetMapping(value = "/filter.php")
+    GetDrinksByIngredientResponse getCocktailsByIngredient(@RequestParam("i") String ingredient);
+
+    @GetMapping(value = "/lookup.php")
+    GetDrinkByIdResponse getCocktailById(@RequestParam(value = "i") String id);
 }
