@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Builder
-@Data
+@Getter
+@Setter
 // Explore why no args constructor is required here but not in Drink entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,4 +28,7 @@ public class Ingredient {
     private String abv;
 
     private Boolean isAlcoholic;
+
+    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.PERSIST)
+    Set<DrinkIngredient> drinks = new HashSet<>();
 }

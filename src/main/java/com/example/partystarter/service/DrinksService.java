@@ -1,17 +1,18 @@
 package com.example.partystarter.service;
 
 import com.example.partystarter.model.Drink;
+import com.example.partystarter.model.DrinkIngredient;
 import com.example.partystarter.model.Ingredient;
 import com.example.partystarter.model.cocktail.*;
 import com.example.partystarter.repo.DrinkRepository;
 import com.example.partystarter.repo.IngredientRepository;
 import com.example.partystarter.service.cocktail.CocktailCaller;
-import com.example.partystarter.service.cocktail.CocktailClient;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -38,7 +39,7 @@ public class DrinksService {
             log.info("Retrieving drinks for ingredient {}", ingredient.getName());
             GetDrinksByIngredientResponse res = cocktailCaller.getDrinkByIngredient(ingredient.getName());
 
-            if(res == null) return;
+            if (res == null) return;
 
             res.drinks.forEach(drink -> {
                 log.info("Retrieving data for drink {}", drink.getName());
@@ -56,8 +57,16 @@ public class DrinksService {
                 .name(drink.getStrDrink())
                 .recipe(drink.getStrInstructions())
                 .externalId(Integer.parseInt(drink.getIdDrink()))
-                .alcoholic(drink.getStrAlcoholic().equals("Alcoholic"))
+                .isAlcoholic(drink.getStrAlcoholic().equals("Alcoholic"))
                 .build();
+
+        DrinkIngredient drinkIngredient = DrinkIngredient.builder()
+                .amount("1/2")
+                .drink(newDrink)
+                .ingredient(ingredientRepository.getByName("Gin"))
+                .build();
+
+        newDrink.setIngredients(Set.of(drinkIngredient));
 
         try {
             if (!drinkRepository.existsByName(newDrink.getName()))
