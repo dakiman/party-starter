@@ -2,45 +2,34 @@ package com.example.partystarter.api;
 
 import com.example.partystarter.model.Drink;
 import com.example.partystarter.repo.DrinkRepository;
-import com.example.partystarter.repo.IngredientRepository;
-import com.example.partystarter.service.DrinksService;
-import com.example.partystarter.service.cocktail.CocktailCaller;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Slf4j
 @RestController
 @RequestMapping(path = "/drinks")
+@AllArgsConstructor
 public class DrinksController {
 
     private final DrinkRepository drinkRepository;
-    private final IngredientRepository ingredientRepository;
-    private final CocktailCaller cocktailCaller;
-    private final DrinksService drinksService;
-
-    public DrinksController(DrinkRepository drinkRepository, IngredientRepository ingredientRepository, CocktailCaller cocktailCaller, DrinksService drinksService) {
-        this.drinkRepository = drinkRepository;
-        this.ingredientRepository = ingredientRepository;
-        this.cocktailCaller = cocktailCaller;
-        this.drinksService = drinksService;
-    }
 
     @GetMapping
-    Iterable<Drink> getDrinks() {
-        return drinkRepository.findAll();
+    ResponseEntity<Iterable<Drink>> getDrinks() {
+        return ResponseEntity.ok(drinkRepository.findAll());
     }
 
     @GetMapping(path = "/ingredients")
-    ResponseEntity getIngredients() {
-        return ResponseEntity.ok(cocktailCaller.getAllIngredients());
+    ResponseEntity getDrink(@RequestParam List<String> ingredients) {
+        return ResponseEntity.ok(ingredients);
     }
-
-//    @GetMapping(path = "/ingredients/sync")
-//    ResponseEntity syncIngredients() {
-//        drinksService.retrieveAndSaveIngredients();
-//        return ResponseEntity.ok(ingredientRepository.findAll());
+//
+//    @GetMapping(path = "")
+//    ResponseEntity getDrinksByIngredients(@RequestParam List<String> ingredients) {
+//
 //    }
-
 
 }
