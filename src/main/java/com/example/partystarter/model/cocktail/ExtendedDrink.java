@@ -48,65 +48,65 @@ public class ExtendedDrink {
     @JsonProperty("strDrinkThumb")
     private String strDrinkThumb;
     @JsonProperty("strIngredient1")
-    private String strIngredient1;
+    public String strIngredient1;
     @JsonProperty("strIngredient2")
-    private String strIngredient2;
+    public String strIngredient2;
     @JsonProperty("strIngredient3")
-    private String strIngredient3;
+    public String strIngredient3;
     @JsonProperty("strIngredient4")
-    private String strIngredient4;
+    public String strIngredient4;
     @JsonProperty("strIngredient5")
-    private String strIngredient5;
+    public String strIngredient5;
     @JsonProperty("strIngredient6")
-    private String strIngredient6;
+    public String strIngredient6;
     @JsonProperty("strIngredient7")
-    private String strIngredient7;
+    public String strIngredient7;
     @JsonProperty("strIngredient8")
-    private String strIngredient8;
+    public String strIngredient8;
     @JsonProperty("strIngredient9")
-    private String strIngredient9;
+    public String strIngredient9;
     @JsonProperty("strIngredient10")
-    private String strIngredient10;
+    public String strIngredient10;
     @JsonProperty("strIngredient11")
-    private String strIngredient11;
+    public String strIngredient11;
     @JsonProperty("strIngredient12")
-    private String strIngredient12;
+    public String strIngredient12;
     @JsonProperty("strIngredient13")
-    private String strIngredient13;
+    public String strIngredient13;
     @JsonProperty("strIngredient14")
-    private String strIngredient14;
+    public String strIngredient14;
     @JsonProperty("strIngredient15")
-    private String strIngredient15;
+    public String strIngredient15;
     @JsonProperty("strMeasure1")
-    private String strMeasure1;
+    public String strMeasure1;
     @JsonProperty("strMeasure2")
-    private String strMeasure2;
+    public String strMeasure2;
     @JsonProperty("strMeasure3")
-    private String strMeasure3;
+    public String strMeasure3;
     @JsonProperty("strMeasure4")
-    private String strMeasure4;
+    public String strMeasure4;
     @JsonProperty("strMeasure5")
-    private String strMeasure5;
+    public String strMeasure5;
     @JsonProperty("strMeasure6")
-    private String strMeasure6;
+    public String strMeasure6;
     @JsonProperty("strMeasure7")
-    private String strMeasure7;
+    public String strMeasure7;
     @JsonProperty("strMeasure8")
-    private String strMeasure8;
+    public String strMeasure8;
     @JsonProperty("strMeasure9")
-    private String strMeasure9;
+    public String strMeasure9;
     @JsonProperty("strMeasure10")
-    private String strMeasure10;
+    public String strMeasure10;
     @JsonProperty("strMeasure11")
-    private String strMeasure11;
+    public String strMeasure11;
     @JsonProperty("strMeasure12")
-    private String strMeasure12;
+    public String strMeasure12;
     @JsonProperty("strMeasure13")
-    private String strMeasure13;
+    public String strMeasure13;
     @JsonProperty("strMeasure14")
-    private String strMeasure14;
+    public String strMeasure14;
     @JsonProperty("strMeasure15")
-    private String strMeasure15;
+    public String strMeasure15;
     @JsonProperty("strImageSource")
     private String strImageSource;
     @JsonProperty("strImageAttribution")

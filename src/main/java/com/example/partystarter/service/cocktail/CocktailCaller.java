@@ -23,22 +23,30 @@ public class CocktailCaller {
         return cocktailClient.getAllIngredients();
     }
 
+    /*
+    * The API has incosistent data structure, returns empty string for non existent drink (With 200 OK)
+    * */
     public GetDrinkByIdResponse getDrinkById(String id) {
         GetDrinkByIdResponse cocktailById = null;
         try {
             cocktailById = cocktailClient.getCocktailById(id);
         } catch (Exception e) {
-            log.info("Exception thrown while retrieving cocktail by ID", e);
+            log.info("Exception thrown while retrieving cocktail by ID: {}", id);
+            log.error("Exception : {}", e.getMessage());
         }
         return cocktailById;
     }
 
+    /*
+     * The API has incosistent data structure, returns empty string for non existent ingredient (With 200 OK)
+     * */
     public GetDrinksByIngredientResponse getDrinkByIngredient(String ingredient) {
             GetDrinksByIngredientResponse cocktailsByIngredient = null;
         try {
             cocktailsByIngredient = cocktailClient.getCocktailsByIngredient(ingredient);
         } catch (Exception e) {
-            log.info("Exception thrown while retrieving cocktail by Ingredient", e);
+            log.info("Exception thrown while retrieving cocktail by ingredient: {}", ingredient);
+            log.error("Exception : {}", e.getMessage());
         }
         return cocktailsByIngredient;
     }

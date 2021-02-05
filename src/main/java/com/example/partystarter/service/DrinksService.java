@@ -11,8 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import static com.example.partystarter.utils.ReflectionUtil.getFieldValue;
 
 @Slf4j
 @Service
@@ -27,8 +28,10 @@ public class DrinksService {
         GetIngredientsResponse response = cocktailCaller.getAllIngredients();
         response.ingredients
                 .forEach(ingredient -> {
-                    GetIngredientDetailsResponse res = cocktailCaller.getIngredientDetails(ingredient.getName());
-                    res.getIngredients().forEach(this::saveNewIngredient);
+                    if (!ingredientRepository.existsByName(ingredient.getName())) {
+                        GetIngredientDetailsResponse res = cocktailCaller.getIngredientDetails(ingredient.getName());
+                        res.getIngredients().forEach(this::saveNewIngredient);
+                    }
                 });
     }
 
@@ -60,13 +63,28 @@ public class DrinksService {
                 .isAlcoholic(drink.getStrAlcoholic().equals("Alcoholic"))
                 .build();
 
-        DrinkIngredient drinkIngredient = DrinkIngredient.builder()
-                .amount("1/2")
-                .drink(newDrink)
-                .ingredient(ingredientRepository.getByName("Gin"))
-                .build();
+        Map<String, String> ingredientAmounts = getIngredientsAndAmounts(drink);
+        Set<DrinkIngredient> drinkIngredients = new HashSet<>();
 
-        newDrink.setIngredients(Set.of(drinkIngredient));
+        ingredientAmounts.forEach((ingredientName, amount) -> {
+            Ingredient ingredient = ingredientRepository
+                    .getByName(ingredientName)
+                    .orElseGet(() ->
+                            ingredientRepository.save(Ingredient.builder()
+                                    .name(ingredientName)
+                                    .build())
+                    );
+
+            DrinkIngredient drinkIngredient = DrinkIngredient.builder()
+                    .amount(amount)
+                    .drink(newDrink)
+                    .ingredient(ingredient)
+                    .build();
+
+            drinkIngredients.add(drinkIngredient);
+        });
+
+        newDrink.setIngredients(drinkIngredients);
 
         try {
             if (!drinkRepository.existsByName(newDrink.getName()))
@@ -100,6 +118,22 @@ public class DrinksService {
         }
 
         return newIngredient;
+    }
+
+    private Map<String, String> getIngredientsAndAmounts(ExtendedDrink drink) {
+        Map<String, String> ingredientAmounts = new HashMap<>();
+
+        for (int i = 1; i < 15; i++) {
+            String name = getFieldValue(drink, "strIngredient" + i);
+            String amount = getFieldValue(drink, "strMeasure" + i);
+
+            if (name == null && amount == null)
+                break;
+
+            ingredientAmounts.put(name, amount);
+        }
+
+        return ingredientAmounts;
     }
 
 

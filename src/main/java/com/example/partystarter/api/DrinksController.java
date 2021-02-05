@@ -26,5 +26,10 @@ public class DrinksController {
     ResponseEntity getDrink(@RequestParam List<String> ingredients) {
         return ResponseEntity.ok(ingredients);
     }
+//
+//    @GetMapping(path = "")
+//    ResponseEntity getDrinksByIngredients(@RequestParam List<String> ingredients) {
+//
+//    }
 
 }

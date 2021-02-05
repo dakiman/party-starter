@@ -19,7 +19,7 @@ public class ScheduledTasks {
         this.drinksService = drinksService;
     }
 
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 6000000)
     public void retrieveIngredients() {
         log.info("Retrieving ingredients data from job");
         drinksService.retrieveAndSaveIngredients();

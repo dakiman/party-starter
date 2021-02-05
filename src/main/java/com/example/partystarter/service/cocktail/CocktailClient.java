@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 //9973533
-@FeignClient(name = "cocktailDb", url = "https://www.thecocktaildb.com", path = "/api/json/v2/1")
+@FeignClient(name = "cocktailDb", url = "https://www.thecocktaildb.com", path = "/api/json/v2/9973533")
 public interface CocktailClient {
 
     @GetMapping(value = "/list.php?i=list")
