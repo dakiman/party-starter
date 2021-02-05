@@ -2,9 +2,9 @@ package com.example.partystarter.service;
 
 import com.example.partystarter.model.Drink;
 import com.example.partystarter.model.DrinkIngredient;
-import com.example.partystarter.model.response.GetDrinksResponse;
 import com.example.partystarter.model.Ingredient;
 import com.example.partystarter.model.cocktail.*;
+import com.example.partystarter.model.response.GetDrinksResponse;
 import com.example.partystarter.model.response.GetDrinksResponseDrink;
 import com.example.partystarter.model.response.GetDrinksResponseIngredient;
 import com.example.partystarter.repo.DrinkRepository;
@@ -65,10 +65,9 @@ public class DrinksService {
                 .name(drink.getName())
                 .recipe(drink.getRecipe())
                 .ingredients(mapIngredients(drink.getIngredients()))
-                .build()).collect(Collectors.toList()
-        );
+                .build()).collect(Collectors.toList());
 
-        return GetDrinksResponse.builder().drinks(responseDrinks).build();
+        return new GetDrinksResponse(responseDrinks);
     }
 
     private List<GetDrinksResponseIngredient> mapIngredients(Set<DrinkIngredient> ingredients) {
@@ -78,76 +77,69 @@ public class DrinksService {
                 .isAlcoholic(ingredient.getIngredient().getIsAlcoholic())
                 .abv(ingredient.getIngredient().getAbv())
                 .amount(ingredient.getAmount())
-                .build()).collect(Collectors.toList()
-        );
+                .build()).collect(Collectors.toList());
     }
 
-
-    private Drink saveNewDrink(ExtendedDrink drink) {
-        log.info("Saving new Drink with name {}", drink.getStrDrink());
-
-        Drink newDrink = Drink.builder()
-                .name(drink.getStrDrink())
-                .recipe(drink.getStrInstructions())
-                .externalId(Integer.parseInt(drink.getIdDrink()))
-                .isAlcoholic(drink.getStrAlcoholic().equals("Alcoholic"))
-                .build();
-
-        Map<String, String> ingredientAmounts = getIngredientsAndAmounts(drink);
-        Set<DrinkIngredient> drinkIngredients = new HashSet<>();
-
-        ingredientAmounts.forEach((ingredientName, amount) -> {
-            Ingredient ingredient = ingredientRepository
-                    .getByName(ingredientName)
-                    .orElseGet(() ->
-                            ingredientRepository.save(Ingredient.builder()
-                                    .name(ingredientName)
-                                    .build())
-                    );
-
-            DrinkIngredient drinkIngredient = DrinkIngredient.builder()
-                    .amount(amount)
-                    .drink(newDrink)
-                    .ingredient(ingredient)
-                    .build();
-
-            drinkIngredients.add(drinkIngredient);
-        });
-
-        newDrink.setIngredients(drinkIngredients);
-
+    private void saveNewDrink(ExtendedDrink drink) {
         try {
-            if (!drinkRepository.existsByName(newDrink.getName()))
+            if (!drinkRepository.existsByName(drink.getStrDrink())) {
+                log.info("Saving new Drink with name {}", drink.getStrDrink());
+
+                Drink newDrink = Drink.builder()
+                        .name(drink.getStrDrink())
+                        .recipe(drink.getStrInstructions())
+                        .externalId(Integer.parseInt(drink.getIdDrink()))
+                        .isAlcoholic(drink.getStrAlcoholic().equals("Alcoholic"))
+                        .build();
+
+                Map<String, String> ingredientAmounts = getIngredientsAndAmounts(drink);
+                Set<DrinkIngredient> drinkIngredients = new HashSet<>();
+
+                ingredientAmounts.forEach((ingredientName, amount) -> {
+                    Ingredient ingredient = ingredientRepository
+                            .getByName(ingredientName)
+                            .orElseGet(() ->
+                                    ingredientRepository.save(Ingredient.builder()
+                                            .name(ingredientName)
+                                            .build())
+                            );
+
+                    DrinkIngredient drinkIngredient = DrinkIngredient.builder()
+                            .amount(amount)
+                            .drink(newDrink)
+                            .ingredient(ingredient)
+                            .build();
+
+                    drinkIngredients.add(drinkIngredient);
+                });
+
+                newDrink.setIngredients(drinkIngredients);
                 drinkRepository.save(newDrink);
-            else
-                log.error("Duplicate entry ignored for drink {}", newDrink.getName());
+            } else
+                log.error("Duplicate entry ignored for drink {}", drink.getStrDrink());
         } catch (Exception e) {
-            log.error("Couldnt save drink {}. Message : \n {}", newDrink.getName(), e.getMessage());
+            log.error("Couldnt save drink {}. Message : \n {}", drink.getStrDrink(), e.getMessage());
         }
-
-        return newDrink;
     }
 
-    private Ingredient saveNewIngredient(ExtendedIngredient ingredient) {
-        Ingredient newIngredient = Ingredient.builder()
-                .name(ingredient.getName())
-                .abv(ingredient.getAbv())
-                .description(ingredient.getDescription())
-                .isAlcoholic(ingredient.getAlchohol() != null && ingredient.getAlchohol().equals("Yes"))
-                .build();
-
-        log.info("Saving new ingredient {}", newIngredient.getName());
-
+    private void saveNewIngredient(ExtendedIngredient ingredient) {
         try {
-            if (!ingredientRepository.existsByName(newIngredient.getName()))
+            if (!ingredientRepository.existsByName(ingredient.getName())) {
+                log.info("Saving new ingredient {}", ingredient.getName());
+
+                Ingredient newIngredient = Ingredient.builder()
+                        .name(ingredient.getName())
+                        .abv(ingredient.getAbv())
+                        .description(ingredient.getDescription())
+                        .isAlcoholic(ingredient.getAlchohol() != null && ingredient.getAlchohol().equals("Yes"))
+                        .build();
+
                 ingredientRepository.save(newIngredient);
-            else
+            } else
                 log.error("Duplicate entry ignored for ingredient {}", ingredient.getName());
         } catch (Exception e) {
             log.error("Couldnt save ingredient {}. Message : \n {}", ingredient.getName(), e.getMessage());
         }
-
-        return newIngredient;
     }
 
     private Map<String, String> getIngredientsAndAmounts(ExtendedDrink drink) {
