@@ -58,7 +58,7 @@ public class DrinksService {
     }
 
     public GetDrinksResponse getDrinksForIngredients(List<String> ingredientNames) {
-        List<Drink> drinks = drinkRepository.findAllByIngredientsIngredientNameIn(ingredientNames);
+        List<Drink> drinks = drinkRepository.findDistinctByIngredientsIngredientNameIn(ingredientNames);
 
         List<GetDrinksResponseDrink> responseDrinks = drinks.stream().map(drink -> GetDrinksResponseDrink.builder()
                 .isAlcoholic(drink.getIsAlcoholic())
