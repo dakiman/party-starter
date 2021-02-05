@@ -16,7 +16,6 @@ import java.util.Set;
 public class Drink {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // hide from json resposne
     private Integer id;
 
     private String name;

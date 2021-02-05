@@ -1,6 +1,5 @@
 package com.example.partystarter.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,7 +16,6 @@ import java.util.Set;
 public class Ingredient {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // hide from json resposne
     private Integer id;
 
     private String name;
