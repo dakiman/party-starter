@@ -2,8 +2,11 @@ package com.example.partystarter.service;
 
 import com.example.partystarter.model.Drink;
 import com.example.partystarter.model.DrinkIngredient;
+import com.example.partystarter.model.response.GetDrinksResponse;
 import com.example.partystarter.model.Ingredient;
 import com.example.partystarter.model.cocktail.*;
+import com.example.partystarter.model.response.GetDrinksResponseDrink;
+import com.example.partystarter.model.response.GetDrinksResponseIngredient;
 import com.example.partystarter.repo.DrinkRepository;
 import com.example.partystarter.repo.IngredientRepository;
 import com.example.partystarter.service.cocktail.CocktailCaller;
@@ -12,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.example.partystarter.utils.ReflectionUtil.getFieldValue;
 
@@ -52,6 +56,32 @@ public class DrinksService {
             });
         });
     }
+
+    public GetDrinksResponse getDrinksForIngredients(List<String> ingredientNames) {
+        List<Drink> drinks = drinkRepository.findAllByIngredientsIngredientNameIn(ingredientNames);
+
+        List<GetDrinksResponseDrink> responseDrinks = drinks.stream().map(drink -> GetDrinksResponseDrink.builder()
+                .isAlcoholic(drink.getIsAlcoholic())
+                .name(drink.getName())
+                .recipe(drink.getRecipe())
+                .ingredients(mapIngredients(drink.getIngredients()))
+                .build()).collect(Collectors.toList()
+        );
+
+        return GetDrinksResponse.builder().drinks(responseDrinks).build();
+    }
+
+    private List<GetDrinksResponseIngredient> mapIngredients(Set<DrinkIngredient> ingredients) {
+        return ingredients.stream().map(ingredient -> GetDrinksResponseIngredient.builder()
+                .name(ingredient.getIngredient().getName())
+//                .description(ingredient.getIngredient().getDescription())
+                .isAlcoholic(ingredient.getIngredient().getIsAlcoholic())
+                .abv(ingredient.getIngredient().getAbv())
+                .amount(ingredient.getAmount())
+                .build()).collect(Collectors.toList()
+        );
+    }
+
 
     private Drink saveNewDrink(ExtendedDrink drink) {
         log.info("Saving new Drink with name {}", drink.getStrDrink());
