@@ -24,8 +24,8 @@ public class CocktailCaller {
     }
 
     /*
-    * The API has incosistent data structure, returns empty string for non existent drink (With 200 OK)
-    * */
+     * The API has inconsistent data structure, returns empty string for non existent drink (With 200 OK)
+     * */
     public GetDrinkByIdResponse getDrinkById(String id) {
         GetDrinkByIdResponse cocktailById = null;
         try {
@@ -38,10 +38,10 @@ public class CocktailCaller {
     }
 
     /*
-     * The API has incosistent data structure, returns empty string for non existent ingredient (With 200 OK)
+     * The API has inconsistent data structure, returns empty string for non existent ingredient (With 200 OK)
      * */
     public GetDrinksByIngredientResponse getDrinkByIngredient(String ingredient) {
-            GetDrinksByIngredientResponse cocktailsByIngredient = null;
+        GetDrinksByIngredientResponse cocktailsByIngredient = null;
         try {
             cocktailsByIngredient = cocktailClient.getCocktailsByIngredient(ingredient);
         } catch (Exception e) {

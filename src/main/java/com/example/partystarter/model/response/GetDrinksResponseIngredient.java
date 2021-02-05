@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class GetDrinksResponseIngredient {
     private String name;
-//    private String description;
+    //    private String description;
     private String abv;
     private Boolean isAlcoholic;
     private String amount;

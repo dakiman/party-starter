@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface DrinkRepository extends JpaRepository<Drink, Integer> {
     boolean existsByName(String name);
+
     List<Drink> findDistinctByIngredientsIngredientNameIn(List<String> names);
 }
