@@ -6,10 +6,10 @@ spring:
 #    data: classpath:import.sql
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 application:
-  should-seed: ${SHOULD_SEED:true}
+  should-seed: ${SHOULD_SEED:false}

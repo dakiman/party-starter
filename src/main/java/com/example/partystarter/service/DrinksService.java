@@ -70,6 +70,17 @@ public class DrinksService {
         return new GetDrinksResponse(responseDrinks);
     }
 
+    public GetDrinksResponse getAllDrinks() {
+        List<GetDrinksResponseDrink> responseDrinks = drinkRepository.findAll().stream().map(drink -> GetDrinksResponseDrink.builder()
+                .isAlcoholic(drink.getIsAlcoholic())
+                .name(drink.getName())
+                .recipe(drink.getRecipe())
+                .ingredients(mapIngredients(drink.getIngredients()))
+                .build()).collect(Collectors.toList());
+
+        return new GetDrinksResponse(responseDrinks);
+    }
+
     private List<GetDrinksResponseIngredient> mapIngredients(Set<DrinkIngredient> ingredients) {
         return ingredients.stream().map(ingredient -> GetDrinksResponseIngredient.builder()
                 .name(ingredient.getIngredient().getName())
