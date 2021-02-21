@@ -4,20 +4,16 @@ import com.example.partystarter.model.cocktail.GetDrinkByIdResponse;
 import com.example.partystarter.model.cocktail.GetDrinksByIngredientResponse;
 import com.example.partystarter.model.cocktail.GetIngredientDetailsResponse;
 import com.example.partystarter.model.cocktail.GetIngredientsResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class CocktailCaller {
 
     private final CocktailClient cocktailClient;
-
-    @Autowired
-    public CocktailCaller(CocktailClient cocktailClient) {
-        this.cocktailClient = cocktailClient;
-    }
 
     public GetIngredientsResponse getAllIngredients() {
         return cocktailClient.getAllIngredients();

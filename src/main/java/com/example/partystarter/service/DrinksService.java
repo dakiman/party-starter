@@ -28,17 +28,6 @@ public class DrinksService {
     private final IngredientRepository ingredientRepository;
     private final DrinkRepository drinkRepository;
 
-    public void retrieveAndSaveIngredients() {
-        GetIngredientsResponse response = cocktailCaller.getAllIngredients();
-        response.ingredients
-                .forEach(ingredient -> {
-                    if (!ingredientRepository.existsByName(ingredient.getName())) {
-                        GetIngredientDetailsResponse res = cocktailCaller.getIngredientDetails(ingredient.getName());
-                        res.getIngredients().forEach(this::saveNewIngredient);
-                    }
-                });
-    }
-
     public void retrieveDrinksForAllIngredients() {
         List<Ingredient> ingredients = ingredientRepository.findAll();
 
@@ -130,26 +119,6 @@ public class DrinksService {
                 log.error("Duplicate entry ignored for drink {}", drink.getStrDrink());
         } catch (Exception e) {
             log.error("Couldnt save drink {}. Message : \n {}", drink.getStrDrink(), e.getMessage());
-        }
-    }
-
-    private void saveNewIngredient(ExtendedIngredient ingredient) {
-        try {
-            if (!ingredientRepository.existsByName(ingredient.getName())) {
-                log.info("Saving new ingredient {}", ingredient.getName());
-
-                Ingredient newIngredient = Ingredient.builder()
-                        .name(ingredient.getName())
-                        .abv(ingredient.getAbv())
-                        .description(ingredient.getDescription())
-                        .isAlcoholic(ingredient.getAlchohol() != null && ingredient.getAlchohol().equals("Yes"))
-                        .build();
-
-                ingredientRepository.save(newIngredient);
-            } else
-                log.error("Duplicate entry ignored for ingredient {}", ingredient.getName());
-        } catch (Exception e) {
-            log.error("Couldnt save ingredient {}. Message : \n {}", ingredient.getName(), e.getMessage());
         }
     }
 

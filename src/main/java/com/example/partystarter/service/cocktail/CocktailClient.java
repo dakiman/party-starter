@@ -8,8 +8,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-//9973533
-@FeignClient(name = "cocktailDb", url = "https://www.thecocktaildb.com", path = "/api/json/v2/9973533")
+@FeignClient(name = "cocktailDb", url = "${application.cocktail-db.url}", path = "/api/json/v2/${application.cocktail-db.apikey}")
 public interface CocktailClient {
 
     @GetMapping(value = "/list.php?i=list")
