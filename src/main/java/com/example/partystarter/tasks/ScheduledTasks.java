@@ -22,7 +22,7 @@ public class ScheduledTasks {
 
 //    TODO How to place config value inside annotation
     @Scheduled(fixedRate = 60000)
-    public void retrieveIngredients() {
+    public void retrieveDrinks() {
         log.info("Seeding is {}", shouldSeed);
 
         if(shouldSeed) {

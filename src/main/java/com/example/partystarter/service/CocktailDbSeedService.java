@@ -24,7 +24,6 @@ public class CocktailDbSeedService {
     private final IngredientRepository ingredientRepository;
     private final DrinkRepository drinkRepository;
 
-    // TODO improve foreach>
     public void retrieveAndSaveIngredients() {
         GetIngredientsResponse response = cocktailCaller.getAllIngredients();
         response.ingredients
@@ -64,40 +63,37 @@ public class CocktailDbSeedService {
     }
 
     private void saveNewDrink(ExtendedDrink drink) {
-        try {
-            if (!drinkRepository.existsByName(drink.getStrDrink())) {
-                log.info("Saving new Drink with name {}", drink.getStrDrink());
-
-                Drink newDrink = mapDrink(drink);
-
-                Map<String, String> ingredientAmounts = getIngredientsAndAmounts(drink);
-                Set<DrinkIngredient> drinkIngredients = new HashSet<>();
-
-                ingredientAmounts.forEach((ingredientName, amount) -> {
-                    Ingredient ingredient = ingredientRepository
-                            .getByName(ingredientName)
-                            .orElseGet(() ->
-                                    ingredientRepository.save(Ingredient.builder()
-                                            .name(ingredientName)
-                                            .build())
-                            );
-
-                    DrinkIngredient drinkIngredient = DrinkIngredient.builder()
-                            .amount(amount)
-                            .drink(newDrink)
-                            .ingredient(ingredient)
-                            .build();
-
-                    drinkIngredients.add(drinkIngredient);
-                });
-
-                newDrink.setIngredients(drinkIngredients);
-                drinkRepository.save(newDrink);
-            } else
-                log.error("Duplicate entry ignored for drink {}", drink.getStrDrink());
-        } catch (Exception e) {
-            log.error("Couldnt save drink {}. Message : \n {}", drink.getStrDrink(), e.getMessage());
+        if (drinkRepository.existsByName(drink.getStrDrink())) {
+            log.error("Duplicate entry ignored for drink {}", drink.getStrDrink());
+            return;
         }
+
+        log.info("Saving new Drink with name {}", drink.getStrDrink());
+        Drink newDrink = mapDrink(drink);
+
+        Map<String, String> ingredientAmounts = getIngredientsAndAmounts(drink);
+        Set<DrinkIngredient> drinkIngredients = new HashSet<>();
+
+        ingredientAmounts.forEach((ingredientName, amount) -> {
+            Ingredient ingredient = ingredientRepository
+                    .getByName(ingredientName)
+                    .orElseGet(() ->
+                            ingredientRepository.save(Ingredient.builder()
+                                    .name(ingredientName)
+                                    .build())
+                    );
+
+            DrinkIngredient drinkIngredient = DrinkIngredient.builder()
+                    .amount(amount)
+                    .drink(newDrink)
+                    .ingredient(ingredient)
+                    .build();
+
+            drinkIngredients.add(drinkIngredient);
+        });
+
+        newDrink.setIngredients(drinkIngredients);
+        drinkRepository.save(newDrink);
     }
 
 }
