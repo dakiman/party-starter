@@ -4,20 +4,16 @@ import com.example.partystarter.model.cocktail.GetDrinkByIdResponse;
 import com.example.partystarter.model.cocktail.GetDrinksByIngredientResponse;
 import com.example.partystarter.model.cocktail.GetIngredientDetailsResponse;
 import com.example.partystarter.model.cocktail.GetIngredientsResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class CocktailCaller {
 
     private final CocktailClient cocktailClient;
-
-    @Autowired
-    public CocktailCaller(CocktailClient cocktailClient) {
-        this.cocktailClient = cocktailClient;
-    }
 
     public GetIngredientsResponse getAllIngredients() {
         return cocktailClient.getAllIngredients();
@@ -31,7 +27,7 @@ public class CocktailCaller {
         try {
             cocktailById = cocktailClient.getCocktailById(id);
         } catch (Exception e) {
-            log.info("Exception thrown while retrieving cocktail by ID: {}", id);
+            log.error("Exception thrown while retrieving cocktail by ID: {}", id);
             log.error("Exception : {}", e.getMessage());
         }
         return cocktailById;
@@ -45,7 +41,7 @@ public class CocktailCaller {
         try {
             cocktailsByIngredient = cocktailClient.getCocktailsByIngredient(ingredient);
         } catch (Exception e) {
-            log.info("Exception thrown while retrieving cocktail by ingredient: {}", ingredient);
+            log.error("Exception thrown while retrieving cocktail by ingredient: {}", ingredient);
             log.error("Exception : {}", e.getMessage());
         }
         return cocktailsByIngredient;

@@ -1,6 +1,7 @@
 package com.example.partystarter.tasks;
 
-import com.example.partystarter.service.DrinksService;
+import com.example.partystarter.service.CocktailDbSeedService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -8,28 +9,29 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ScheduledTasks {
 
-    private final DrinksService drinksService;
+    private final CocktailDbSeedService cocktailDbSeedService;
 
-    @Value("${application.should-seed}")
+    @Value("${application.seeding.should-seed}")
     private boolean shouldSeed;
 
-    public ScheduledTasks(DrinksService drinksService) {
-        this.drinksService = drinksService;
-    }
+//    @Value("${application.seeding.interval}")
+//    private static long seedInterval;
 
-    @Scheduled(fixedRate = 6000000)
-    public void retrieveIngredients() {
+//    TODO How to place config value inside annotation
+    @Scheduled(fixedRate = 60000)
+    public void retrieveDrinks() {
         log.info("Seeding is {}", shouldSeed);
 
         if(shouldSeed) {
             log.info("Retrieving ingredients data from job");
-            drinksService.retrieveAndSaveIngredients();
+            cocktailDbSeedService.retrieveAndSaveIngredients();
             log.info("Ingredients retrieved");
 
             log.info("Retrieving Drinks data for all ingredients");
-            drinksService.retrieveDrinksForAllIngredients();
+            cocktailDbSeedService.retrieveDrinksForAllIngredients();
             log.info("Drinks retrieved");
         }
     }

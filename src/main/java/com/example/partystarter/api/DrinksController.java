@@ -5,10 +5,7 @@ import com.example.partystarter.service.DrinksService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,9 +17,14 @@ public class DrinksController {
 
     private final DrinksService drinksService;
 
-    @GetMapping(path = "")
+    @GetMapping(path = "", params = {"ingredients"}) // params required for overloading endpoint
     ResponseEntity<GetDrinksResponse> getDrinksByIngredients(@RequestParam List<String> ingredients) {
         return ResponseEntity.ok(drinksService.getDrinksForIngredients(ingredients));
+    }
+
+    @GetMapping(path = "")
+    ResponseEntity<GetDrinksResponse> getAllDrinks() {
+        return ResponseEntity.ok(drinksService.getAllDrinks());
     }
 
 }

@@ -1,15 +1,26 @@
 spring:
   datasource:
-    password: ''
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/spring_app
-    username: root
+    password: ${DB_PASSWORD:} #default is empty string for local
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/spring_app
+    username: ${DB_USERNAME:root}
 #    data: classpath:import.sql
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 application:
-  should-seed: ${SHOULD_SEED:true}
+  seeding:
+    should-seed: ${SHOULD_SEED:false}
+    interval: ${SEED_INTERVAL:60000}
+  cocktail-db:
+    url: "https://www.thecocktaildb.com"
+    apikey: ${COCKTAIL_DB_API_KEY:1} #free API Key is '1'
+
+#feign:
+#  client:
+#    config:
+#      default:
+#        loggerLevel: full
