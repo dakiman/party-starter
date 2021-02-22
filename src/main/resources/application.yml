@@ -1,8 +1,8 @@
 spring:
   datasource:
-    password: ${MYSQL_PASSWORD:} #default is empty string for local
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/spring_app
-    username: ${MYSQL_USERNAME:root}
+    password: ${DB_PASSWORD:} #default is empty string for local
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/spring_app
+    username: ${DB_USERNAME:root}
 #    data: classpath:import.sql
   jpa:
     hibernate:
