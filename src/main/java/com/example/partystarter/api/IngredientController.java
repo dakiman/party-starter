@@ -1,6 +1,7 @@
 package com.example.partystarter.api;
 
 import com.example.partystarter.repo.IngredientRepository;
+import com.example.partystarter.service.IngredientsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,11 @@ import java.util.List;
 @AllArgsConstructor
 public class IngredientController {
 
-    private final IngredientRepository ingredientRepository;
+    private final IngredientsService ingredientsService;
 
     @GetMapping(path = "")
     ResponseEntity<List<String>> getAllIngredients() {
-        return ResponseEntity.ok(ingredientRepository.getIngredientNames());
+        return ResponseEntity.ok(ingredientsService.getAllIngredientNames());
     }
 
 }

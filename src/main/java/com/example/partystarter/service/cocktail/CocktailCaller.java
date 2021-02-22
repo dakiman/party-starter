@@ -27,7 +27,7 @@ public class CocktailCaller {
         try {
             cocktailById = cocktailClient.getCocktailById(id);
         } catch (Exception e) {
-            log.info("Exception thrown while retrieving cocktail by ID: {}", id);
+            log.error("Exception thrown while retrieving cocktail by ID: {}", id);
             log.error("Exception : {}", e.getMessage());
         }
         return cocktailById;
@@ -41,7 +41,7 @@ public class CocktailCaller {
         try {
             cocktailsByIngredient = cocktailClient.getCocktailsByIngredient(ingredient);
         } catch (Exception e) {
-            log.info("Exception thrown while retrieving cocktail by ingredient: {}", ingredient);
+            log.error("Exception thrown while retrieving cocktail by ingredient: {}", ingredient);
             log.error("Exception : {}", e.getMessage());
         }
         return cocktailsByIngredient;
