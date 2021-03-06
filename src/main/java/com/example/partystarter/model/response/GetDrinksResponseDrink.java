@@ -15,5 +15,6 @@ public class GetDrinksResponseDrink {
     private String name;
     private String recipe;
     private Boolean isAlcoholic;
+    private String thumbnail;
     private List<GetDrinksResponseIngredient> ingredients;
 }
