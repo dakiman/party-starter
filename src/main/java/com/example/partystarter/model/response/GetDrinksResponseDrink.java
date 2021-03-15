@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class GetDrinksResponseDrink {
+    private Integer id;
     private String name;
     private String recipe;
     private Boolean isAlcoholic;

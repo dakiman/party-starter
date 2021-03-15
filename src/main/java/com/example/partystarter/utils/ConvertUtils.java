@@ -52,6 +52,7 @@ public class ConvertUtils {
 
     public static GetDrinksResponseDrink mapDrinksToResponse(Drink drink) {
         return GetDrinksResponseDrink.builder()
+                .id(drink.getId())
                 .isAlcoholic(drink.getIsAlcoholic())
                 .thumbnail(drink.getThumbnail())
                 .name(drink.getName())
