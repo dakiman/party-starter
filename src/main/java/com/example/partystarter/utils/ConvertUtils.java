@@ -7,6 +7,8 @@ import com.example.partystarter.model.cocktail.ExtendedDrink;
 import com.example.partystarter.model.cocktail.ExtendedIngredient;
 import com.example.partystarter.model.response.GetDrinksResponseDrink;
 import com.example.partystarter.model.response.GetDrinksResponseIngredient;
+import com.example.partystarter.model.response.GetIngredientsResponse;
+import com.example.partystarter.model.response.GetIngredientsResponseIngredient;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,7 @@ public class ConvertUtils {
                 .recipe(drink.getStrInstructions())
                 .externalId(Integer.parseInt(drink.getIdDrink()))
                 .isAlcoholic(drink.getStrAlcoholic().equals("Alcoholic"))
+                .thumbnail(drink.getStrDrinkThumb())
                 .build();
     }
 
@@ -50,9 +53,19 @@ public class ConvertUtils {
     public static GetDrinksResponseDrink mapDrinksToResponse(Drink drink) {
         return GetDrinksResponseDrink.builder()
                 .isAlcoholic(drink.getIsAlcoholic())
+                .thumbnail(drink.getThumbnail())
                 .name(drink.getName())
                 .recipe(drink.getRecipe())
                 .ingredients(mapIngredients(drink.getIngredients()))
+                .build();
+    }
+
+    public static GetIngredientsResponseIngredient mapIngredientsToResponse(Ingredient ingredient) {
+        return GetIngredientsResponseIngredient.builder()
+                .name(ingredient.getName())
+                .abv(ingredient.getAbv())
+                .isAlcoholic(ingredient.getIsAlcoholic())
+                .description(ingredient.getDescription())
                 .build();
     }
 

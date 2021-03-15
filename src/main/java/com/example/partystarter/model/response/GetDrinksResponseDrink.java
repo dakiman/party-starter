@@ -14,6 +14,7 @@ import java.util.List;
 public class GetDrinksResponseDrink {
     private String name;
     private String recipe;
-    private boolean isAlcoholic;
+    private Boolean isAlcoholic;
+    private String thumbnail;
     private List<GetDrinksResponseIngredient> ingredients;
 }

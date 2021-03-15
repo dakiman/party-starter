@@ -26,6 +26,8 @@ public class Drink {
 
     private Boolean isAlcoholic;
 
+    private String thumbnail;
+
     @OneToMany(mappedBy = "drink", cascade = CascadeType.PERSIST)
     Set<DrinkIngredient> ingredients = new HashSet<>();
 
