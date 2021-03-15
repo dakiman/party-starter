@@ -21,7 +21,7 @@ public class ScheduledTasks {
 //    private static long seedInterval;
 
 //    TODO How to place config value inside annotation
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 6000000)
     public void retrieveDrinks() {
         log.info("Seeding is {}", shouldSeed);
 
