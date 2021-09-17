@@ -1,0 +1,109 @@
+{
+	"info": {
+		"_postman_id": "844ea137-73c7-4708-b0c2-cc7ad5d15cd2",
+		"name": "PartyStarter",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET Ingredients",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/ingredients",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ingredients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Drinks by Ingredient",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/drinks?ingredients=Vodka",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"drinks"
+					],
+					"query": [
+						{
+							"key": "ingredients",
+							"value": "Vodka"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Party",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/parties/3713",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"parties",
+						"3713"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Party",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"drinks\": [\r\n        {\r\n            \"id\": 167\r\n        },\r\n        {\r\n            \"id\": 259\r\n        }, \r\n        {\r\n            \"id\": 421\r\n        }\r\n    ],\r\n    \"name\": \"za elenche\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/parties",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"parties"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
