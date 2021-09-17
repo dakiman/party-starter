@@ -22,11 +22,9 @@ public class Party {
 
     @ManyToMany
     @JsonIgnore
-    @JoinTable(
-            name = "party_drinks",
+    @JoinTable(name = "party_drinks",
             joinColumns = @JoinColumn(name = "party_id"),
-            inverseJoinColumns = @JoinColumn(name = "drink_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "drink_id"))
     private Set<Drink> drinks = new HashSet<>();
 
 }

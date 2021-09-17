@@ -6,14 +6,14 @@ spring:
 #    data: classpath:import.sql
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 application:
   seeding:
-    should-seed: ${SHOULD_SEED:false}
+    should-seed: ${SHOULD_SEED:true}
     interval: ${SEED_INTERVAL:60000}
   cocktail-db:
     url: "https://www.thecocktaildb.com"
