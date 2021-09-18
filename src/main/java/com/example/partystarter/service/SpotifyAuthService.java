@@ -17,6 +17,7 @@ public class SpotifyAuthService {
     @Value("${application.spotify.client-secret}")
     private String clientSecret;
 
+//    TODO cache token on method level???
     public String getSpotifyToken() {
         String authSecretData = clientId + ":" + clientSecret;
         String authHeader = Base64.getEncoder().encodeToString(authSecretData.getBytes());

@@ -11,4 +11,8 @@ public class SpotifyCaller {
     public Object getTrack(String trackId) {
         return spotifyCaller.getTrack(trackId);
     }
+
+    public Object getFeaturedPlaylists() {
+        return spotifyCaller.getFeaturedPlaylists();
+    }
 }
