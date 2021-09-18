@@ -6,7 +6,7 @@ spring:
 #    data: classpath:import.sql
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -16,11 +16,11 @@ application:
     should-seed: ${SHOULD_SEED:true}
     interval: ${SEED_INTERVAL:60000}
   cocktail-db:
-    url: "https://www.thecocktaildb.com"
+    url: https://www.thecocktaildb.com
     apikey: ${COCKTAIL_DB_API_KEY:1} #free API Key is '1'
-
-#feign:
-#  client:
-#    config:
-#      default:
-#        loggerLevel: full
+  spotify:
+    auth:
+      client-id: ee225924105b4363802728d60bda8c6c
+      client-secret: cfbc9140eafd488da9791294833bcd28
+      url: https://accounts.spotify.com
+    url: https://api.spotify.com
