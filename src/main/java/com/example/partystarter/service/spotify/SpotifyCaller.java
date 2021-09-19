@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class SpotifyCaller {
-    private final SpotifyCaller spotifyCaller;
+    private final SpotifyClient spotifyClient;
 
     public Object getTrack(String trackId) {
-        return spotifyCaller.getTrack(trackId);
+        return spotifyClient.getTrack(trackId);
     }
 
     public Object getFeaturedPlaylists() {
-        return spotifyCaller.getFeaturedPlaylists();
+        return spotifyClient.getFeaturedPlaylists();
     }
 }

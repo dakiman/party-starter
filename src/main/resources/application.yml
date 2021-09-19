@@ -13,7 +13,7 @@ spring:
 
 application:
   seeding:
-    should-seed: ${SHOULD_SEED:true}
+    should-seed: ${SHOULD_SEED:false}
     interval: ${SEED_INTERVAL:60000}
   cocktail-db:
     url: https://www.thecocktaildb.com
