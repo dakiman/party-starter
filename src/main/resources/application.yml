@@ -24,3 +24,6 @@ application:
       client-secret: cfbc9140eafd488da9791294833bcd28
       url: https://accounts.spotify.com
     url: https://api.spotify.com
+logging:
+  level:
+    root: debug
