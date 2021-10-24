@@ -6,7 +6,7 @@ spring:
 #    data: classpath:import.sql
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -26,4 +26,4 @@ application:
     url: https://api.spotify.com
 logging:
   level:
-    root: debug
+    root: ${LOGGING_LEVEL:info}

@@ -19,7 +19,7 @@ public class SpotifyAuthService {
     @Value("${application.spotify.auth.client-secret}")
     private String clientSecret;
 
-//    TODO cache token on method level???
+//    TODO Check if cache is working as intended
     @Cacheable(cacheNames = "spotifyToken")
     public String getSpotifyToken() {
         String authSecretData = clientId + ":" + clientSecret;

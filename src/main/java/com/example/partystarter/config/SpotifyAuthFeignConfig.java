@@ -15,7 +15,7 @@ public class SpotifyAuthFeignConfig {
         return requestTemplate -> {
 //            requestTemplate.header("Accept", "*/*");
 //            requestTemplate.header("Content-Type", "application/x-www-form-urlencoded");
-            requestTemplate.header("Content-Length", "29");
+//            requestTemplate.header("Content-Length", "29");
         };
     }
 
