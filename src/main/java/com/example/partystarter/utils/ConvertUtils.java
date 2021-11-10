@@ -3,12 +3,10 @@ package com.example.partystarter.utils;
 import com.example.partystarter.model.Drink;
 import com.example.partystarter.model.DrinkIngredient;
 import com.example.partystarter.model.Ingredient;
+import com.example.partystarter.model.Party;
 import com.example.partystarter.model.cocktail.ExtendedDrink;
 import com.example.partystarter.model.cocktail.ExtendedIngredient;
-import com.example.partystarter.model.response.GetDrinksResponseDrink;
-import com.example.partystarter.model.response.GetDrinksResponseIngredient;
-import com.example.partystarter.model.response.GetIngredientsResponse;
-import com.example.partystarter.model.response.GetIngredientsResponseIngredient;
+import com.example.partystarter.model.response.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +50,7 @@ public class ConvertUtils {
 
     public static GetDrinksResponseDrink mapDrinksToResponse(Drink drink) {
         return GetDrinksResponseDrink.builder()
+                .id(drink.getId())
                 .isAlcoholic(drink.getIsAlcoholic())
                 .thumbnail(drink.getThumbnail())
                 .name(drink.getName())
@@ -66,6 +65,20 @@ public class ConvertUtils {
                 .abv(ingredient.getAbv())
                 .isAlcoholic(ingredient.getIsAlcoholic())
                 .description(ingredient.getDescription())
+                .build();
+    }
+
+    public static PartyResponse mapPartyToResponse(Party party) {
+        List<GetDrinksResponseDrink> drinks = party
+                .getDrinks()
+                .stream()
+                .map(ConvertUtils::mapDrinksToResponse)
+                .collect(Collectors.toList());
+
+        return PartyResponse.builder()
+                .id(party.getId())
+                .name(party.getName())
+                .drinks(drinks)
                 .build();
     }
 

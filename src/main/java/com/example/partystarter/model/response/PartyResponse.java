@@ -7,15 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Builder
 @Data
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
-public class GetDrinksResponseDrink {
+public class PartyResponse {
     private Integer id;
     private String name;
-    private String recipe;
-    private Boolean isAlcoholic;
-    private String thumbnail;
-    private List<GetDrinksResponseIngredient> ingredients;
+    private List<GetDrinksResponseDrink> drinks;
 }

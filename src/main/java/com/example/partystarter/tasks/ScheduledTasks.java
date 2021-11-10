@@ -4,6 +4,7 @@ import com.example.partystarter.service.CocktailDbSeedService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +14,11 @@ import org.springframework.stereotype.Component;
 public class ScheduledTasks {
 
     private final CocktailDbSeedService cocktailDbSeedService;
+    private final CacheManager cacheManager;
 
     @Value("${application.seeding.should-seed}")
     private boolean shouldSeed;
+
 
 //    @Value("${application.seeding.interval}")
 //    private static long seedInterval;
@@ -34,6 +37,12 @@ public class ScheduledTasks {
             cocktailDbSeedService.retrieveDrinksForAllIngredients();
             log.info("Drinks retrieved");
         }
+    }
+
+    @Scheduled(fixedRate = 3000000)
+    public void evictAllCaches() {
+        cacheManager.getCacheNames()
+                .forEach(cacheName -> cacheManager.getCache(cacheName).clear());
     }
 
 }

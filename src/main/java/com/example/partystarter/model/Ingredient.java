@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Ingredient {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Integer id;
 
     private String name;
@@ -29,4 +29,5 @@ public class Ingredient {
 
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.PERSIST)
     Set<DrinkIngredient> drinks = new HashSet<>();
+
 }
