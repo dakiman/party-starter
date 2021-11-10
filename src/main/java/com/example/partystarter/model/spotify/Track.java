@@ -2,11 +2,8 @@
 package com.example.partystarter.model.spotify;
 
 import java.util.List;
-import javax.annotation.Generated;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,30 +15,30 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Track {
 
-    public Album album;
-    public List<Artist> artists = null;
+    private Album album;
+    private List<Artist> artists = null;
     @JsonProperty("available_markets")
-    public List<Object> availableMarkets = null;
+    private List<Object> availableMarkets = null;
     @JsonProperty("disc_number")
-    public Integer discNumber;
+    private Integer discNumber;
     @JsonProperty("duration_ms")
-    public Integer durationMs;
-    public Boolean explicit;
+    private Integer durationMs;
+    private Boolean explicit;
     @JsonProperty("external_ids")
-    public ExternalIds externalIds;
+    private ExternalIds externalIds;
     @JsonProperty("external_urls")
-    public ExternalUrls externalUrls;
-    public String href;
-    public String id;
+    private ExternalUrls externalUrls;
+    private String href;
+    private String id;
     @JsonProperty("is_local")
-    public Boolean isLocal;
-    public String name;
-    public Integer popularity;
+    private Boolean isLocal;
+    private String name;
+    private Integer popularity;
     @JsonProperty("preview_url")
-    public Object previewUrl;
+    private Object previewUrl;
     @JsonProperty("track_number")
-    public Integer trackNumber;
-    public String type;
-    public String uri;
+    private Integer trackNumber;
+    private String type;
+    private String uri;
 
 }

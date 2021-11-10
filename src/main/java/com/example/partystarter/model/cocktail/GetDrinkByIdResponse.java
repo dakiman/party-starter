@@ -8,5 +8,5 @@ import java.util.List;
 @Data
 public class GetDrinkByIdResponse {
     @JsonProperty("drinks")
-    public List<ExtendedDrink> drinks = null;
+    private List<ExtendedDrink> drinks = null;
 }

@@ -2,10 +2,7 @@
 package com.example.partystarter.model.spotify;
 
 import java.util.List;
-import javax.annotation.Generated;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,24 +15,24 @@ import lombok.NoArgsConstructor;
 public class Album {
 
     @JsonProperty("album_type")
-    public String albumType;
+    private String albumType;
     @JsonProperty("artists")
-    public List<Artist> artists = null;
+    private List<Artist> artists = null;
     @JsonProperty("available_markets")
-    public List<Object> availableMarkets = null;
+    private List<Object> availableMarkets = null;
     @JsonProperty("external_urls")
-    public ExternalUrls externalUrls;
-    public String href;
-    public String id;
-    public List<Image> images = null;
-    public String name;
+    private ExternalUrls externalUrls;
+    private String href;
+    private String id;
+    private List<Image> images = null;
+    private String name;
     @JsonProperty("release_date")
-    public String releaseDate;
+    private String releaseDate;
     @JsonProperty("release_date_precision")
-    public String releaseDatePrecision;
+    private String releaseDatePrecision;
     @JsonProperty("total_tracks")
-    public Integer totalTracks;
-    public String type;
-    public String uri;
+    private Integer totalTracks;
+    private String type;
+    private String uri;
 
 }

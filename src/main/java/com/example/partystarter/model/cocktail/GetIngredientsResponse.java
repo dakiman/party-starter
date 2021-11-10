@@ -8,5 +8,5 @@ import java.util.List;
 @Data
 public class GetIngredientsResponse {
     @JsonProperty("drinks")
-    public List<SimpleIngredient> ingredients = null;
+    private List<SimpleIngredient> ingredients = null;
 }

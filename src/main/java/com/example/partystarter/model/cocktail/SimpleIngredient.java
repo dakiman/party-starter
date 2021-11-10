@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class SimpleIngredient {
     @JsonProperty("strIngredient1")
-    String name;
+    private String name;
 }

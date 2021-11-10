@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class GetIngredientDetailsResponse {
-    List<ExtendedIngredient> ingredients = null;
+    private List<ExtendedIngredient> ingredients = null;
 }

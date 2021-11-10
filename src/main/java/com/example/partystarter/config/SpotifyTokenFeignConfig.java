@@ -1,7 +1,6 @@
 package com.example.partystarter.config;
 
 import com.example.partystarter.service.SpotifyAuthService;
-import feign.Logger;
 import feign.RequestInterceptor;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,9 +12,8 @@ public class SpotifyTokenFeignConfig {
 
     @Bean
     public RequestInterceptor requestInterceptor() {
-        return requestTemplate -> {
-            requestTemplate.header("Authorization", "Bearer " + spotifyAuthService.getSpotifyToken());
-        };
+        return requestTemplate ->
+                requestTemplate.header("Authorization", "Bearer " + spotifyAuthService.getSpotifyToken());
     }
 
 }

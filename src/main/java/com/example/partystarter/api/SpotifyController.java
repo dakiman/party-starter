@@ -19,12 +19,12 @@ public class SpotifyController {
     private final SpotifySongService spotifySongService;
 
     @GetMapping(path = "/genres")
-    ResponseEntity<SpotifyGetGenresResponse> getFeaturedPlaylists() {
+    public ResponseEntity<SpotifyGetGenresResponse> getFeaturedPlaylists() {
         return ResponseEntity.ok(spotifySongService.getGenres());
     }
 
     @GetMapping(path = "/recommendations")
-    ResponseEntity<?> getRecommendations(@RequestParam List<String> genres, @RequestParam List<String> types) {
+    public ResponseEntity<Object> getRecommendations(@RequestParam List<String> genres, @RequestParam List<String> types) {
         Object recommendations = spotifySongService.getRecommendations(genres, types);
         return ResponseEntity.ok(recommendations);
     }

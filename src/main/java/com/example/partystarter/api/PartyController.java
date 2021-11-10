@@ -16,12 +16,12 @@ public class PartyController {
     private final PartyService partyService;
 
     @PostMapping(path = "")
-    ResponseEntity<PartyResponse> createNewParty(@RequestBody PostPartyRequest request) {
+    public ResponseEntity<PartyResponse> createNewParty(@RequestBody PostPartyRequest request) {
         return ResponseEntity.ok(partyService.saveParty(request));
     }
     
     @GetMapping(path = "/{id}")
-    ResponseEntity<PartyResponse> getParty(@PathVariable(value = "id") Integer id) {
+    public ResponseEntity<PartyResponse> getParty(@PathVariable(value = "id") Integer id) {
         return ResponseEntity.ok(partyService.getParty(id));
     }
 

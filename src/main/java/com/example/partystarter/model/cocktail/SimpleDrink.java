@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public class SimpleDrink {
     @JsonProperty("idDrink")
-    public String id;
+    private String id;
 
     @JsonProperty("strDrink")
-    public String name;
+    private String name;
 }

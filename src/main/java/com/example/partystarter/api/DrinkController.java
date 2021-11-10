@@ -18,12 +18,12 @@ public class DrinkController {
     private final DrinksService drinksService;
 
     @GetMapping(path = "", params = {"ingredients"}) // params required for overloading endpoint
-    ResponseEntity<GetDrinksResponse> getDrinksByIngredients(@RequestParam List<String> ingredients) {
+    public ResponseEntity<GetDrinksResponse> getDrinksByIngredients(@RequestParam List<String> ingredients) {
         return ResponseEntity.ok(drinksService.getDrinksForIngredients(ingredients));
     }
 
     @GetMapping(path = "")
-    ResponseEntity<GetDrinksResponse> getAllDrinks() {
+    public ResponseEntity<GetDrinksResponse> getAllDrinks() {
         return ResponseEntity.ok(drinksService.getAllDrinks());
     }
 

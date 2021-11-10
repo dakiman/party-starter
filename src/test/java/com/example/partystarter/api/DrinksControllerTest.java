@@ -63,7 +63,7 @@ public class DrinksControllerTest {
         GetDrinksResponse getDrinksResponse = getDrinksResponse();
         List<String> ingredientArguments = Collections.singletonList(INGREDIENT_NAME);
 
-        when(drinksService.getDrinksForIngredients(eq(ingredientArguments))).thenReturn(getDrinksResponse);
+        when(drinksService.getDrinksForIngredients(ingredientArguments)).thenReturn(getDrinksResponse);
 
         GetDrinksResponse response = objectMapper.readValue(
                 mockMvc.perform(get("/drinks?ingredients=" + INGREDIENT_NAME))

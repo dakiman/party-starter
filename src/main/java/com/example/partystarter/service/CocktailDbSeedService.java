@@ -26,7 +26,7 @@ public class CocktailDbSeedService {
 
     public void retrieveAndSaveIngredients() {
         GetIngredientsResponse response = cocktailCaller.getAllIngredients();
-        response.ingredients
+        response.getIngredients()
                 .forEach(ingredient -> {
                     GetIngredientDetailsResponse res = cocktailCaller.getIngredientDetails(ingredient.getName());
                     res.getIngredients().forEach(this::saveNewIngredient);
@@ -42,7 +42,7 @@ public class CocktailDbSeedService {
 
             if (res == null) return;
 
-            res.drinks.forEach(drink -> {
+            res.getDrinks().forEach(drink -> {
                 log.info("Retrieving data for drink {}", drink.getName());
                 GetDrinkByIdResponse drinkByIdResponse = cocktailCaller.getDrinkById(drink.getId());
 

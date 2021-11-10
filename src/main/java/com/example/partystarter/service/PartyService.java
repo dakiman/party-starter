@@ -7,7 +7,6 @@ import com.example.partystarter.repo.PartyRepository;
 import com.example.partystarter.utils.ConvertUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashSet;
 

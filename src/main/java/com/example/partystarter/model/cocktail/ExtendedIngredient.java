@@ -7,16 +7,16 @@ import lombok.Data;
 public class ExtendedIngredient {
 
     @JsonProperty("idIngredient")
-    public String id;
+    private String id;
     @JsonProperty("strIngredient")
-    public String name;
+    private String name;
     @JsonProperty("strDescription")
-    public String description;
+    private String description;
     @JsonProperty("strType")
-    public String type;
+    private String type;
     @JsonProperty("strAlcohol")
-    public String alchohol;
+    private String alchohol;
     @JsonProperty("strABV")
-    public String abv;
+    private String abv;
 
 }

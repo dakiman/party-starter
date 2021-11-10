@@ -12,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetDrinksResponse {
-    List<GetDrinksResponseDrink> drinks;
+    private List<GetDrinksResponseDrink> drinks;
 }
