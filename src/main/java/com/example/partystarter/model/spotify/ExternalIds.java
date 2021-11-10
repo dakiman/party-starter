@@ -1,6 +1,10 @@
+
 package com.example.partystarter.model.spotify;
 
+import javax.annotation.Generated;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,13 +14,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpotifyTokenResponse {
-    @JsonProperty(value = "access_token")
-    private String accessToken;
+public class ExternalIds {
 
-    @JsonProperty(value = "token_type")
-    private String tokenType;
+    public String isrc;
 
-    @JsonProperty(value = "expires_in")
-    private Integer expiresIn;
 }

@@ -7,11 +7,9 @@ import org.springframework.stereotype.Component;
 import static java.util.Arrays.asList;
 
 @Component
-public class CacheConfig
-        implements CacheManagerCustomizer<ConcurrentMapCacheManager> {
-
+public class CacheConfig implements CacheManagerCustomizer<ConcurrentMapCacheManager> {
     @Override
     public void customize(ConcurrentMapCacheManager cacheManager) {
-        cacheManager.setCacheNames(asList("spotifyToken"));
+        cacheManager.setCacheNames(asList("spotifyToken", "genres"));
     }
 }
