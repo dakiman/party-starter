@@ -27,7 +27,8 @@ public class PartystarterApplication {
             public void addCorsMappings(CorsRegistry registry) {
                 registry
                         .addMapping("/*")
-                        .allowedOrigins("http://localhost:8081");
+//                        change to read from config
+                        .allowedOrigins("*");
             }
         };
     }
