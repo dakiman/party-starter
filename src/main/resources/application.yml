@@ -1,12 +1,12 @@
 spring:
   datasource:
     password: ${DB_PASSWORD:} #default is empty string for local
-    url: jdbc:mysql://${DB_HOST:localhost:3306/spring_app}
+    url: jdbc:mysql://${DB_HOST:localhost:3306}/${DB_NAME:spring_app}
     username: ${DB_USERNAME:root}
 #    data: classpath:import.sql
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
