@@ -25,7 +25,6 @@ public class SpotifyAuthService {
         String authSecretData = clientId + ":" + clientSecret;
         String authHeader = Base64.getEncoder().encodeToString(authSecretData.getBytes());
         SpotifyTokenResponse tokenResponse = spotifyAuthCaller.getSpotifyToken(authHeader);
-//        TODO change snakecase to camel case if possible
         return tokenResponse.getAccessToken();
     }
 }

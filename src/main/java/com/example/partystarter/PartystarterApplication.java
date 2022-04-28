@@ -19,14 +19,15 @@ public class PartystarterApplication {
         SpringApplication.run(PartystarterApplication.class, args);
     }
 
-//    TODO move beans to config classes
+    //    TODO move beans to config classes
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry
-                        .addMapping("/*")
+//                        two ** to catch all types of routes (multiple slashes in route)
+                        .addMapping("/**")
 //                        change to read from config
                         .allowedOrigins("*");
             }
