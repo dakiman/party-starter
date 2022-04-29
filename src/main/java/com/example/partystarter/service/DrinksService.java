@@ -7,6 +7,7 @@ import com.example.partystarter.repo.DrinkRepository;
 import com.example.partystarter.utils.ConvertUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,6 +21,7 @@ public class DrinksService {
 
     private final DrinkRepository drinkRepository;
 
+    @Cacheable(cacheNames = "drinks")
     public GetDrinksResponse getDrinksForIngredients(List<String> ingredientNames) {
         List<Drink> drinks = drinkRepository.findDistinctByIngredientsIngredientNameIn(ingredientNames);
 
