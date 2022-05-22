@@ -25,12 +25,10 @@ public class PartystarterApplication {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry
-//                        two ** to catch all types of routes (multiple slashes in route)
-                        .addMapping("/**")
-//                        .allowedOriginPatterns("*")
-//                        change to read from config
-                        .allowedOrigins("*");
+                registry.addMapping("/**")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedOrigins("*")
+                        .allowedHeaders("*");
             }
         };
     }

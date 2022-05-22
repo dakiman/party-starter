@@ -19,12 +19,9 @@ public class IngredientsService {
     private final IngredientRepository ingredientRepository;
 
     @Cacheable(cacheNames = "ingredients")
-    public GetIngredientsResponse getAllIngredients(Boolean isAlcoholic) {
-        List<Ingredient> ingredients;
-
-        ingredients = ingredientRepository.getIngredientByIsAlcoholic(isAlcoholic);
-
-        List<GetIngredientsResponseIngredient> responseIngredients = ingredients
+    public GetIngredientsResponse getAllIngredients(boolean isAlcoholic) {
+        List<GetIngredientsResponseIngredient> responseIngredients = ingredientRepository
+                .getIngredientByIsAlcoholic(isAlcoholic)
                 .stream()
                 .map(ConvertUtils::mapIngredientsToResponse)
                 .toList();

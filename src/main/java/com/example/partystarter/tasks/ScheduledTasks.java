@@ -19,10 +19,6 @@ public class ScheduledTasks {
     @Value("${application.seeding.should-seed}")
     private boolean shouldSeed;
 
-
-//    @Value("${application.seeding.interval}")
-//    private static long seedInterval;
-
 //    TODO How to place config value inside annotation
     @Scheduled(fixedRate = 6000000)
     public void retrieveDrinks() {

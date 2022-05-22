@@ -23,7 +23,7 @@ public class SpotifySongService {
         return spotifyCaller.getGenres();
     }
 
-    public Object getRecommendations(List<String> genres,  List<String> types) {
+    public Object getRecommendations(List<String> genres, List<String> types) {
         return spotifyCaller.getRecommendations(genres, types);
     }
 

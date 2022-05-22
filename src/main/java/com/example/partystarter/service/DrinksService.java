@@ -11,7 +11,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -23,9 +22,8 @@ public class DrinksService {
 
     @Cacheable(cacheNames = "drinks")
     public GetDrinksResponse getDrinksForIngredients(List<String> ingredientNames) {
-        List<Drink> drinks = drinkRepository.findDistinctByIngredientsIngredientNameIn(ingredientNames);
-
-        List<GetDrinksResponseDrink> responseDrinks = drinks
+        List<GetDrinksResponseDrink> responseDrinks = drinkRepository
+                .findDistinctByIngredientsIngredientNameIn(ingredientNames)
                 .stream()
                 .map(ConvertUtils::mapDrinksToResponse)
                 .toList();

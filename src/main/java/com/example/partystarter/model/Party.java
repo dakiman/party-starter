@@ -6,6 +6,8 @@ import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -26,6 +28,6 @@ public class Party {
     @JoinTable(name = "party_drinks",
             joinColumns = @JoinColumn(name = "party_id"),
             inverseJoinColumns = @JoinColumn(name = "drink_id"))
-    private Set<Drink> drinks = new HashSet<>();
+    private List<Drink> drinks = new LinkedList<>();
 
 }
