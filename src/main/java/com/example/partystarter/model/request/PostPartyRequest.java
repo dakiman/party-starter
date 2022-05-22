@@ -1,14 +1,15 @@
 package com.example.partystarter.model.request;
 
-import com.example.partystarter.model.Drink;
 import lombok.Data;
-import org.springframework.lang.Nullable;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
 public class PostPartyRequest {
-    private List<Drink> drinks;
-    @Nullable
+    @NotNull
+    private List<Integer> drinks;
+    @Length(min = 3, max = 40)
     private String name;
 }

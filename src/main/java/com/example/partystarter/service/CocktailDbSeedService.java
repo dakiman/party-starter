@@ -26,29 +26,31 @@ public class CocktailDbSeedService {
 
     public void retrieveAndSaveIngredients() {
         GetIngredientsResponse response = cocktailCaller.getAllIngredients();
+
         response.getIngredients()
-                .forEach(ingredient -> {
-                    GetIngredientDetailsResponse res = cocktailCaller.getIngredientDetails(ingredient.getName());
-                    res.getIngredients().forEach(this::saveNewIngredient);
-                });
+                .stream()
+                .map(ingredient -> cocktailCaller.getIngredientDetails(ingredient.getName()))
+                .forEach(res -> res.getIngredients().forEach(this::saveNewIngredient));
     }
 
     public void retrieveDrinksForAllIngredients() {
-        List<Ingredient> ingredients = ingredientRepository.findAll();
+        ingredientRepository
+                .findAll()
+                .forEach(ingredient -> {
+                    log.info("Retrieving drinks for ingredient {}", ingredient.getName());
+                    GetDrinksByIngredientResponse res = cocktailCaller.getDrinkByIngredient(ingredient.getName());
 
-        ingredients.forEach(ingredient -> {
-            log.info("Retrieving drinks for ingredient {}", ingredient.getName());
-            GetDrinksByIngredientResponse res = cocktailCaller.getDrinkByIngredient(ingredient.getName());
+                    if (res == null) return;
 
-            if (res == null) return;
+                    res.getDrinks().forEach(this::saveDrink);
+                });
+    }
 
-            res.getDrinks().forEach(drink -> {
-                log.info("Retrieving data for drink {}", drink.getName());
-                GetDrinkByIdResponse drinkByIdResponse = cocktailCaller.getDrinkById(drink.getId());
+    private void saveDrink(SimpleDrink drink) {
+        log.info("Retrieving data for drink {}", drink.getName());
+        GetDrinkByIdResponse drinkByIdResponse = cocktailCaller.getDrinkById(drink.getId());
 
-                drinkByIdResponse.getDrinks().forEach(this::saveNewDrink);
-            });
-        });
+        drinkByIdResponse.getDrinks().forEach(this::saveNewDrink);
     }
 
     private void saveNewIngredient(ExtendedIngredient ingredient) {

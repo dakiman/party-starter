@@ -8,15 +8,13 @@ import com.example.partystarter.model.cocktail.ExtendedDrink;
 import com.example.partystarter.model.cocktail.ExtendedIngredient;
 import com.example.partystarter.model.response.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static com.example.partystarter.utils.ReflectionUtils.getFieldValue;
 
 public class ConvertUtils {
+
+    private ConvertUtils() {}
 
     public static Drink mapDrink(ExtendedDrink drink) {
         return Drink.builder()
@@ -39,13 +37,14 @@ public class ConvertUtils {
 
 
     public static List<GetDrinksResponseIngredient> mapIngredients(Set<DrinkIngredient> ingredients) {
-        return ingredients.stream().map(ingredient -> GetDrinksResponseIngredient.builder()
-                .name(ingredient.getIngredient().getName())
-//                .description(ingredient.getIngredient().getDescription())
-                .isAlcoholic(ingredient.getIngredient().getIsAlcoholic())
-                .abv(ingredient.getIngredient().getAbv())
-                .amount(ingredient.getAmount())
-                .build()).collect(Collectors.toList());
+        return ingredients.stream()
+                .map(ingredient -> GetDrinksResponseIngredient.builder()
+                        .name(ingredient.getIngredient().getName())
+                        .isAlcoholic(ingredient.getIngredient().getIsAlcoholic())
+                        .abv(ingredient.getIngredient().getAbv())
+                        .amount(ingredient.getAmount())
+                        .build())
+                .toList();
     }
 
     public static GetDrinksResponseDrink mapDrinksToResponse(Drink drink) {
@@ -61,6 +60,7 @@ public class ConvertUtils {
 
     public static GetIngredientsResponseIngredient mapIngredientsToResponse(Ingredient ingredient) {
         return GetIngredientsResponseIngredient.builder()
+                .id(ingredient.getId())
                 .name(ingredient.getName())
                 .abv(ingredient.getAbv())
                 .isAlcoholic(ingredient.getIsAlcoholic())
@@ -73,7 +73,7 @@ public class ConvertUtils {
                 .getDrinks()
                 .stream()
                 .map(ConvertUtils::mapDrinksToResponse)
-                .collect(Collectors.toList());
+                .toList();
 
         return PartyResponse.builder()
                 .id(party.getId())

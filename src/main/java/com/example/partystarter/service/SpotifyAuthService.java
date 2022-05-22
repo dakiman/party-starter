@@ -19,13 +19,11 @@ public class SpotifyAuthService {
     @Value("${application.spotify.auth.client-secret}")
     private String clientSecret;
 
-//    TODO Check if cache is working as intended
     @Cacheable(cacheNames = "spotifyToken")
     public String getSpotifyToken() {
         String authSecretData = clientId + ":" + clientSecret;
         String authHeader = Base64.getEncoder().encodeToString(authSecretData.getBytes());
         SpotifyTokenResponse tokenResponse = spotifyAuthCaller.getSpotifyToken(authHeader);
-//        TODO change snakecase to camel case if possible
         return tokenResponse.getAccessToken();
     }
 }
