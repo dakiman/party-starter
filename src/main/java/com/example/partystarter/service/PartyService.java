@@ -24,16 +24,15 @@ public class PartyService {
     }
 
     public PartyResponse saveParty(PostPartyRequest request) {
-        Party party = new Party();
-        party.setDrinks(new HashSet<>(request.getDrinks()));
-        party.setName(request.getName() == null ? "New party" : request.getName());
-        party = partyRepository.saveAndFlush(party);
-        Party newParty = partyRepository
-                .findById(party.getId())
-                .orElseThrow();
+        Party party = Party.builder()
+                .drinks(new HashSet<>(request.getDrinks()))
+                .name(request.getName() == null ? "New party" : request.getName())
+                .build();
 
-//        return getParty(party.getId());
-        return ConvertUtils.mapPartyToResponse(newParty);
+        party = partyRepository.saveAndFlush(party);
+        party = partyRepository.findById(party.getId()).orElseThrow();
+
+        return ConvertUtils.mapPartyToResponse(party);
     }
 
 }

@@ -28,7 +28,7 @@ public class DrinksService {
         List<GetDrinksResponseDrink> responseDrinks = drinks
                 .stream()
                 .map(ConvertUtils::mapDrinksToResponse)
-                .collect(Collectors.toList());
+                .toList();
 
         return new GetDrinksResponse(responseDrinks);
     }
@@ -38,7 +38,7 @@ public class DrinksService {
                 .findAll()
                 .stream()
                 .map(ConvertUtils::mapDrinksToResponse)
-                .collect(Collectors.toList());
+                .toList();
 
         return new GetDrinksResponse(responseDrinks);
     }

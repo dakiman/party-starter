@@ -8,10 +8,7 @@ import com.example.partystarter.model.cocktail.ExtendedDrink;
 import com.example.partystarter.model.cocktail.ExtendedIngredient;
 import com.example.partystarter.model.response.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.partystarter.utils.ReflectionUtils.getFieldValue;

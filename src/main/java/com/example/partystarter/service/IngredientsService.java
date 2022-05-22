@@ -7,11 +7,9 @@ import com.example.partystarter.repo.IngredientRepository;
 import com.example.partystarter.utils.ConvertUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -21,19 +19,15 @@ public class IngredientsService {
     private final IngredientRepository ingredientRepository;
 
     @Cacheable(cacheNames = "ingredients")
-    public GetIngredientsResponse getAllIngredients(@Nullable Boolean isAlcoholic) {
+    public GetIngredientsResponse getAllIngredients(Boolean isAlcoholic) {
         List<Ingredient> ingredients;
 
-        if (isAlcoholic != null) {
-            ingredients = ingredientRepository.getIngredientByIsAlcoholic(isAlcoholic);
-        } else {
-            ingredients = ingredientRepository.findAll();
-        }
+        ingredients = ingredientRepository.getIngredientByIsAlcoholic(isAlcoholic);
 
         List<GetIngredientsResponseIngredient> responseIngredients = ingredients
                 .stream()
                 .map(ConvertUtils::mapIngredientsToResponse)
-                .collect(Collectors.toList());
+                .toList();
 
         return new GetIngredientsResponse(responseIngredients);
     }

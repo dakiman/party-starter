@@ -28,6 +28,7 @@ public class PartystarterApplication {
                 registry
 //                        two ** to catch all types of routes (multiple slashes in route)
                         .addMapping("/**")
+//                        .allowedOriginPatterns("*")
 //                        change to read from config
                         .allowedOrigins("*");
             }
