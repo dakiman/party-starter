@@ -19,7 +19,6 @@ public class ScheduledTasks {
     @Value("${application.seeding.should-seed}")
     private boolean shouldSeed;
 
-//    TODO How to place config value inside annotation
     @Scheduled(fixedRate = 6000000)
     public void retrieveDrinks() {
         log.info("Seeding is {}", shouldSeed);

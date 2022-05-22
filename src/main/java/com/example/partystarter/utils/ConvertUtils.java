@@ -9,11 +9,12 @@ import com.example.partystarter.model.cocktail.ExtendedIngredient;
 import com.example.partystarter.model.response.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.example.partystarter.utils.ReflectionUtils.getFieldValue;
 
 public class ConvertUtils {
+
+    private ConvertUtils() {}
 
     public static Drink mapDrink(ExtendedDrink drink) {
         return Drink.builder()

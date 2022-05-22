@@ -1,6 +1,5 @@
 package com.example.partystarter.service;
 
-import com.example.partystarter.model.Ingredient;
 import com.example.partystarter.model.response.GetIngredientsResponse;
 import com.example.partystarter.model.response.GetIngredientsResponseIngredient;
 import com.example.partystarter.repo.IngredientRepository;
