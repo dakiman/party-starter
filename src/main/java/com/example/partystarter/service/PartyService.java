@@ -1,5 +1,6 @@
 package com.example.partystarter.service;
 
+import com.example.partystarter.exception.ResourceException;
 import com.example.partystarter.model.Drink;
 import com.example.partystarter.model.Party;
 import com.example.partystarter.model.request.PostPartyRequest;
@@ -23,7 +24,7 @@ public class PartyService {
     public PartyResponse getParty(Integer id) {
         Party party = partyRepository
                 .findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cant find party by id"));
+                .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "Cant find party by id"));
 
         return ConvertUtils.mapPartyToResponse(party);
     }
@@ -32,7 +33,7 @@ public class PartyService {
         List<Drink> drinks = drinkRepository.findAllById(request.getDrinks());
 
         if (drinks.size() < request.getDrinks().size()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cant find all drinks by id");
+            throw new ResourceException(HttpStatus.NOT_FOUND, "Cant find all drinks by id");
         }
 
         Party party = Party.builder()
