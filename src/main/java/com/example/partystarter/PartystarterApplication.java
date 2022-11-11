@@ -19,17 +19,17 @@ public class PartystarterApplication {
         SpringApplication.run(PartystarterApplication.class, args);
     }
 
-    //    TODO move beans to config classes
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedOrigins("*")
-                        .allowedHeaders("*");
-            }
-        };
-    }
+//    //    TODO move beans to config classes
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+//                        .allowedOrigins("*")
+//                        .allowedHeaders("*");
+//            }
+//        };
+//    }
 }

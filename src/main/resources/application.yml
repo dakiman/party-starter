@@ -11,6 +11,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
+app:
+  security:
+    jwt:
+      keystore-location: keys/keystore.jks
+      keystore-password: dakidaki
+      key-alias: jwtsigning
+      private-key-passphrase: dakidaki
+
 application:
   seeding:
     should-seed: ${SHOULD_SEED:false}
@@ -27,3 +35,4 @@ application:
 logging:
   level:
     root: ${LOGGING_LEVEL:info}
+
