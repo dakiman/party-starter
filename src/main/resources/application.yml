@@ -12,6 +12,8 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 application:
+  security:
+    jwt-secret: ${JWT_SECRET:MYJWTSECRET123}
   seeding:
     should-seed: ${SHOULD_SEED:false}
     interval: ${SEED_INTERVAL:60000}
