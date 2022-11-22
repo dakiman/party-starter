@@ -20,8 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserRepository userRepo;
-    @Autowired
     private JWTFilter filter;
     @Autowired
     private CustomUserDetailsService uds;
