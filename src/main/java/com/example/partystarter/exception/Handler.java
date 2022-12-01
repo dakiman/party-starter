@@ -1,18 +1,35 @@
 package com.example.partystarter.exception;
 
 import com.example.partystarter.model.response.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.ObjectError;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.validation.ConstraintViolationException;
-import java.util.stream.Collectors;
+import java.nio.file.AccessDeniedException;
 
 @ControllerAdvice
+@Slf4j
 public class Handler {
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> handleException(AuthenticationException e) {
+        log.info("AuthenticationException: " + e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleException(AccessDeniedException e) {
+        log.info("AccessDeniedException: " + e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse(e.getMessage()));
+    }
 
     @ExceptionHandler(ResourceException.class)
     public ResponseEntity<?> handleException(ResourceException e) {
