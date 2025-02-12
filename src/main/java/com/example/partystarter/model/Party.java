@@ -3,7 +3,7 @@ package com.example.partystarter.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.LinkedList;
 import java.util.List;
 

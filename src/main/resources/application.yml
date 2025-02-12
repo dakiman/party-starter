@@ -18,14 +18,14 @@ application:
     issuer: ${JWT_ISSUER:PartyStarterInc}
   seeding:
     should-seed: ${SHOULD_SEED:false}
-    interval: ${SEED_INTERVAL:60000}
+#    interval: ${SEED_INTERVAL:60000} #cant inject value to fixedRate param on Scheduler
   cocktail-db:
     url: https://www.thecocktaildb.com
     apikey: ${COCKTAIL_DB_API_KEY:1} #free API Key is '1'
   spotify:
     auth:
-      client-id: ee225924105b4363802728d60bda8c6c
-      client-secret: cfbc9140eafd488da9791294833bcd28
+      client-id: d0982bc6c139493bbe74eee8d2ddd811
+      client-secret: 71e38651417d4691847c3759f6ee46a4
       url: https://accounts.spotify.com
     url: https://api.spotify.com
 logging:
