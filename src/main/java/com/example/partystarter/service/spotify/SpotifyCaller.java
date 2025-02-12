@@ -14,23 +14,23 @@ import java.util.Arrays;
 public class SpotifyCaller {
     private final SpotifyClient spotifyClient;
 
-    public Object getTrack(String trackId) {
-        return spotifyClient.getTrack(trackId);
-    }
-
-    public Object getFeaturedPlaylists() {
-        return spotifyClient.getFeaturedPlaylists();
-    }
+//    public Object getTrack(String trackId) {
+//        return spotifyClient.getTrack(trackId);
+//    }
+//
+//    public Object getFeaturedPlaylists() {
+//        return spotifyClient.getFeaturedPlaylists();
+//    }
 
     public SpotifyGetGenresResponse getGenres() {
         return spotifyClient.getGenres();
     }
 
-    public Object getRecommendations(List<String> genres, List<String> types) {
-        GetRecommendationsResponse recommendations = spotifyClient.getRecommendations(genres, types);
-        log.info("Artist:" + recommendations.getTracks().get(0).getArtists().get(0).getName());
-        return recommendations.getTracks().get(0).getArtists().get(0).getExternalUrls().getSpotify();
-    }
+//    public Object getRecommendations(List<String> genres, List<String> types) {
+//        GetRecommendationsResponse recommendations = spotifyClient.getRecommendations(genres, types);
+//        log.info("Artist:" + recommendations.getTracks().get(0).getArtists().get(0).getName());
+//        return recommendations.getTracks().get(0).getArtists().get(0).getExternalUrls().getSpotify();
+//    }
 
     public SearchArtistsResponse searchArtists(String name) {
         SpotifySearchResponse response = spotifyClient.searchArtists(name, "artist", 10);

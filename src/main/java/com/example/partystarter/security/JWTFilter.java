@@ -46,11 +46,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // Special case: /auth/user should be protected
-        if (path.equals("/auth/user")) {
-            return false;
-        }
-
         for (String pattern : publicPaths) {
             if (pathMatcher.match(pattern, path)) {
                 return true;
@@ -65,8 +60,8 @@ public class JWTFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
             String authHeader = request.getHeader(AUTHORIZATION_HEADER);
-            logger.debug("Processing request to: " + request.getMethod() + " " + request.getRequestURI());
-            logger.debug("Authorization header: " + (authHeader != null ? "present" : "missing"));
+            logger.debug("Processing request to: {} {}", request.getMethod(), request.getRequestURI());
+            logger.debug("Authorization header: {}", authHeader != null ? "present" : "missing");
 
             // If no auth header or not a protected endpoint, continue with chain
             if (authHeader == null || shouldNotFilter(request)) {
@@ -81,7 +76,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
             String jwt = authHeader.substring(BEARER_PREFIX.length());
             String username = jwtUtil.validateTokenAndRetrieveSubject(jwt);
-            logger.debug("JWT validation successful for username: " + username);
+            logger.debug("JWT validation successful for username: {}", username);
 
             // Set authentication if not already set
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -90,16 +85,15 @@ public class JWTFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                logger.debug("Successfully set authentication in SecurityContext");
             }
 
             filterChain.doFilter(request, response);
         } catch (JWTVerificationException e) {
-            logger.error("JWT validation failed: " + e.getMessage());
+            logger.error("JWT validation failed: {}", e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Unauthorized: " + e.getMessage());
         } catch (Exception e) {
-            logger.error("Error in JWT filter: " + e.getMessage());
+            logger.error("Error in JWT filter: {}", e.getMessage());
             filterChain.doFilter(request, response);
         }
     }

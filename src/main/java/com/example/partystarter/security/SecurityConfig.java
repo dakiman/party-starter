@@ -1,6 +1,5 @@
 package com.example.partystarter.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,10 +21,13 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class SecurityConfig {
     
-    @Autowired
-    private JWTFilter filter;
-    @Autowired
-    private CustomUserDetailsService uds;
+    private final JWTFilter filter;
+    private final CustomUserDetailsService uds;
+
+    public SecurityConfig(CustomUserDetailsService uds, JWTFilter filter) {
+        this.uds = uds;
+        this.filter = filter;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -42,11 +44,11 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         // Protected endpoints
-                        .requestMatchers("/auth/user").hasRole("USER")
-                        .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/auth/user").authenticated()
+                        .requestMatchers("/user/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/parties/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/parties/**").authenticated()
-                        .requestMatchers("/music/**").hasRole("USER")
+                        .requestMatchers("/music/**").authenticated()
                         // Any other endpoint requires authentication
                         .anyRequest().authenticated();
                 })

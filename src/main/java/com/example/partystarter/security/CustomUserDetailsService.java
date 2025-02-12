@@ -2,7 +2,6 @@ package com.example.partystarter.security;
 
 import com.example.partystarter.model.User;
 import com.example.partystarter.repo.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,12 +14,14 @@ import java.util.Optional;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepo;
+    private final UserRepository userRepo;
+
+    public CustomUserDetailsService(UserRepository userRepo) {
+        this.userRepo = userRepo;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        // Try to find user by username first, then by email if not found
         Optional<User> userRes = userRepo.getByUsername(usernameOrEmail);
         if(userRes.isEmpty()) {
             userRes = userRepo.findByEmail(usernameOrEmail);

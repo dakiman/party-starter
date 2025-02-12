@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "/music")
@@ -24,16 +22,15 @@ public class MusicController {
         return ResponseEntity.ok(spotifySongService.getGenres());
     }
 
-    @GetMapping(path = "/recommendations")
-    public ResponseEntity<Object> getRecommendations(@RequestParam List<String> genres, @RequestParam List<String> types) {
-        Object recommendations = spotifySongService.getRecommendations(genres, types);
-        return ResponseEntity.ok(recommendations);
-    }
+//    @GetMapping(path = "/recommendations")
+//    public ResponseEntity<Object> getRecommendations(@RequestParam List<String> genres, @RequestParam List<String> types) {
+//        Object recommendations = spotifySongService.getRecommendations(genres, types);
+//        return ResponseEntity.ok(recommendations);
+//    }
 
     @GetMapping(path = "/artists")
     public ResponseEntity<SearchArtistsResponse> searchArtists(@RequestParam String name) {
-        SearchArtistsResponse artists = spotifySongService.searchArtists(name);
-        return ResponseEntity.ok(artists);
+        return ResponseEntity.ok(spotifySongService.searchArtists(name));
     }
 
 }
