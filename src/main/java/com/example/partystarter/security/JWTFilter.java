@@ -38,8 +38,9 @@ public class JWTFilter extends OncePerRequestFilter {
         String[] publicPaths = {
                 "/auth/login",
                 "/auth/register",
-                "/drinks",
-                "/ingredients",
+                "/drinks", // remove route from public
+                "/music/artists", //remove route from public
+                "/ingredients", //remove route from public
                 "/swagger-ui/**",
                 "/v3/api-docs/**"
         };

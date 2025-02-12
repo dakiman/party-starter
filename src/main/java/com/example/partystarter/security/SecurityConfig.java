@@ -39,16 +39,17 @@ public class SecurityConfig {
                     // Public endpoints
                     auth.requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/register").permitAll()
-                        .requestMatchers("/drinks").permitAll()
-                        .requestMatchers("/ingredients").permitAll()
+                        .requestMatchers("/drinks").permitAll() // TODO protect endpoint
+                        .requestMatchers("/ingredients").permitAll() // TODO protect endpoint
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/music/**").permitAll() // TODO protect endpoint
                         // Protected endpoints
                         .requestMatchers("/auth/user").authenticated()
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/parties/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/parties/**").authenticated()
-                        .requestMatchers("/music/**").authenticated()
+//                        .requestMatchers("/music/**").authenticated()
                         // Any other endpoint requires authentication
                         .anyRequest().authenticated();
                 })

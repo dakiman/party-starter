@@ -10,9 +10,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-
 application:
-
   security:
     jwt-secret: ${JWT_SECRET:MYJWTSECRET123}
     issuer: ${JWT_ISSUER:PartyStarterInc}
@@ -31,3 +29,6 @@ application:
 logging:
   level:
     root: ${LOGGING_LEVEL:info}
+#server:
+#  port: 8080
+#  address: 192.168.20.176

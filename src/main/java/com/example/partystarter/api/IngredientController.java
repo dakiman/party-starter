@@ -18,9 +18,10 @@ public class IngredientController {
     private final IngredientsService ingredientsService;
 
     @GetMapping(path = "")
-    public ResponseEntity<GetIngredientsResponse> getAllIngredients(@RequestParam(defaultValue = "true")
-                                                                    boolean isAlcoholic) {
-        return ResponseEntity.ok(ingredientsService.getAllIngredients(isAlcoholic));
+    public ResponseEntity<GetIngredientsResponse> getAllIngredients(
+            @RequestParam(defaultValue = "true") boolean isAlcoholic,
+            @RequestParam(required = false) String name) {
+        return ResponseEntity.ok(ingredientsService.getAllIngredients(isAlcoholic, name));
     }
 
 }
