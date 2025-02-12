@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "f6c52564-9894-49c3-942f-878132351ef5",
+		"_postman_id": "785a7d92-3974-434a-874d-93f9ab318ad0",
 		"name": "PartyStarter",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3626135"
 	},
 	"item": [
 		{
@@ -11,11 +12,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/ingredients",
+					"raw": "{{url}}/ingredients",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"ingredients"
 					]
@@ -29,11 +29,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/drinks?ingredients=Vodka",
+					"raw": "{{url}}/drinks?ingredients=Vodka",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"drinks"
 					],
@@ -65,11 +64,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/parties/3713",
+					"raw": "{{url}}/parties/3713",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"parties",
 						"3713"
@@ -103,11 +101,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/parties",
+					"raw": "{{url}}/parties",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"parties"
 					]
@@ -130,11 +127,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/auth/register",
+					"raw": "{{url}}/auth/register",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"auth",
 						"register"
@@ -158,11 +154,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/auth/login",
+					"raw": "{{url}}/auth/login",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"auth",
 						"login"
@@ -199,11 +194,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/auth/user",
+					"raw": "{{url}}/auth/user",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"auth",
 						"user"
