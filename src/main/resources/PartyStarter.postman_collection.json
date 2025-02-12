@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "844ea137-73c7-4708-b0c2-cc7ad5d15cd2",
+		"_postman_id": "785a7d92-3974-434a-874d-93f9ab318ad0",
 		"name": "PartyStarter",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3626135"
 	},
 	"item": [
 		{
@@ -11,11 +12,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/ingredients",
+					"raw": "{{url}}/ingredients",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"ingredients"
 					]
@@ -29,11 +29,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/drinks?ingredients=Vodka",
+					"raw": "{{url}}/drinks?ingredients=Vodka",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"drinks"
 					],
@@ -65,11 +64,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/parties/3713",
+					"raw": "{{url}}/parties/3713",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"parties",
 						"3713"
@@ -81,11 +79,21 @@
 		{
 			"name": "POST Party",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyIERldGFpbHMiLCJpc3MiOiJQYXJ0eVN0YXJ0ZXIgSW5jIiwiaWF0IjoxNjY4OTc1NTc1LCJlbWFpbCI6ImR2YW5jb3ZAaG90bWFpbC5jb20ifQ.QCixE2MVCarqDZxr48K9A0C2gcR2ilHcZjB8wy8TonY",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"drinks\": [\r\n        {\r\n            \"id\": 167\r\n        },\r\n        {\r\n            \"id\": 259\r\n        }, \r\n        {\r\n            \"id\": 421\r\n        }\r\n    ],\r\n    \"name\": \"za elenche\"\r\n}",
+					"raw": "{\r\n    \"drinks\": [\r\n        500\r\n    ],\r\n    \"name\": \"za\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -93,13 +101,106 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/parties",
+					"raw": "{{url}}/parties",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8080",
 					"path": [
 						"parties"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\" : \"dakiman\",\n    \"email\" : \"dvancov@hotmail.com\",\n    \"password\" : \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/auth/register",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\" : \"dakiman\",\n    \"password\" : \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/auth/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET User",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyIERldGFpbHMiLCJpc3MiOiJQYXJ0eVN0YXJ0ZXIgSW5jIiwiaWF0IjoxNjY4OTc3ODY5LCJ1c2VybmFtZSI6ImRha2ltYW4ifQ.toAdhzP0LMO-yEU95gFsXlvQ1YH90TlopIn2NbWrzuI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\" : \"dvancov@hotmail.com\",\n    \"password\" : \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/auth/user",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth",
+						"user"
 					]
 				}
 			},

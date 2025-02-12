@@ -14,6 +14,7 @@ public class SpotifyAuthCaller {
     private final SpotifyAuthClient spotifyAuthClient;
 
     public SpotifyTokenResponse getSpotifyToken(String authToken) {
+        log.info("token: {}", authToken);
         return spotifyAuthClient.getSpotifyToken("Basic " + authToken, Map.of("grant_type", "client_credentials"));
     }
 
