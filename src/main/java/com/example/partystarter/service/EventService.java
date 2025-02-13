@@ -59,6 +59,7 @@ public class EventService {
                 .artists(artists)
                 .drinks(drinks)
                 .foodItems(request.getFood() != null ? request.getFood() : new ArrayList<>())
+                .isPrivate(request.getIsPrivate() != null ? request.getIsPrivate() : false)
                 .build();
 
         event = eventRepository.save(event);

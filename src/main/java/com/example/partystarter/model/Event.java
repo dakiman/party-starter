@@ -60,4 +60,7 @@ public class Event {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Builder.Default
+    private Boolean isPrivate = false;
 } 

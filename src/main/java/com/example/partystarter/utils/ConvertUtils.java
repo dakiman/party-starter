@@ -91,6 +91,7 @@ public class ConvertUtils {
                 .food(event.getFoodItems())
                 .createdAt(event.getCreatedAt())
                 .updatedAt(event.getUpdatedAt())
+                .isPrivate(event.getIsPrivate())
                 .build();
     }
 

@@ -26,6 +26,7 @@ public class EventResponse {
     private List<String> food;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean isPrivate;
 
     @Data
     @Builder

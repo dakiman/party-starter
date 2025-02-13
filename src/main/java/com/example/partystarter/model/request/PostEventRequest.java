@@ -27,6 +27,8 @@ public class PostEventRequest {
     
     private List<String> food;
 
+    private Boolean isPrivate;
+
     @Data
     public static class LocationRequest {
         private Double lat;
