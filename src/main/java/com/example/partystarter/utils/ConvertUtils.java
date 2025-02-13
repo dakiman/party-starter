@@ -1,9 +1,6 @@
 package com.example.partystarter.utils;
 
-import com.example.partystarter.model.Drink;
-import com.example.partystarter.model.DrinkIngredient;
-import com.example.partystarter.model.Ingredient;
-import com.example.partystarter.model.Party;
+import com.example.partystarter.model.*;
 import com.example.partystarter.model.cocktail.ExtendedDrink;
 import com.example.partystarter.model.cocktail.ExtendedIngredient;
 import com.example.partystarter.model.response.*;
@@ -69,16 +66,31 @@ public class ConvertUtils {
     }
 
     public static PartyResponse mapPartyToResponse(Party party) {
-        List<GetDrinksResponseDrink> drinks = party
-                .getDrinks()
-                .stream()
-                .map(ConvertUtils::mapDrinksToResponse)
-                .toList();
-
         return PartyResponse.builder()
                 .id(party.getId())
                 .name(party.getName())
-                .drinks(drinks)
+                .date(party.getDate())
+                .time(party.getTime())
+                .location(party.getLocation() != null ? PartyResponse.LocationResponse.builder()
+                        .latitude(party.getLocation().getLatitude())
+                        .longitude(party.getLocation().getLongitude())
+                        .description(party.getLocation().getDescription())
+                        .build() : null)
+                .artists(party.getArtists().stream()
+                        .map(artist -> PartyResponse.ArtistResponse.builder()
+                                .spotifyId(artist.getSpotifyId())
+                                .name(artist.getName())
+                                .images(artist.getImages())
+                                .genres(new ArrayList<>(artist.getGenres()))
+                                .spotifyUrl(artist.getSpotifyUrl())
+                                .build())
+                        .toList())
+                .drinks(party.getDrinks().stream()
+                        .map(ConvertUtils::mapDrinksToResponse)
+                        .toList())
+                .food(party.getFoodItems())
+                .createdAt(party.getCreatedAt())
+                .updatedAt(party.getUpdatedAt())
                 .build();
     }
 
@@ -97,4 +109,5 @@ public class ConvertUtils {
 
         return ingredientAmounts;
     }
+
 }

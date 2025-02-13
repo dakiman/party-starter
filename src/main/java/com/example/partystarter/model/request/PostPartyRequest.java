@@ -1,15 +1,36 @@
 package com.example.partystarter.model.request;
 
+import com.example.partystarter.model.spotify.ArtistResponse;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
 public class PostPartyRequest {
-    @Size(min = 1, message = "You must choose at least one drink")
-    private List<Integer> drinks;
     @Length(min = 3, max = 40)
     private String name;
+    
+    @NotNull(message = "Date is required")
+    private LocalDate date;
+    
+    private LocalTime time;
+    
+    private LocationRequest location;
+    
+    private List<ArtistResponse> artists;
+    
+    private List<Integer> drinks;
+    
+    private List<String> food;
+
+    @Data
+    public static class LocationRequest {
+        private Double lat;
+        private Double lng;
+        private String locationDescription;
+    }
 }
