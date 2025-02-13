@@ -25,6 +25,7 @@ public class Party {
     @JoinTable(name = "party_drinks",
             joinColumns = @JoinColumn(name = "party_id"),
             inverseJoinColumns = @JoinColumn(name = "drink_id"))
+    @Builder.Default
     private List<Drink> drinks = new LinkedList<>();
 
 }

@@ -1,4 +1,3 @@
-
 package com.example.partystarter.model.spotify;
 
 import java.util.List;
@@ -17,13 +16,16 @@ public class Album {
     @JsonProperty("album_type")
     private String albumType;
     @JsonProperty("artists")
+    @Builder.Default
     private List<Artist> artists = null;
     @JsonProperty("available_markets")
+    @Builder.Default
     private List<Object> availableMarkets = null;
     @JsonProperty("external_urls")
     private ExternalUrls externalUrls;
     private String href;
     private String id;
+    @Builder.Default
     private List<Image> images = null;
     private String name;
     @JsonProperty("release_date")

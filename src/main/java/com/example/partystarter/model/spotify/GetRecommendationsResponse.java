@@ -1,4 +1,3 @@
-
 package com.example.partystarter.model.spotify;
 
 import java.util.List;
@@ -13,7 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GetRecommendationsResponse {
 
+    @Builder.Default
     private List<Track> tracks = null;
+    @Builder.Default
     private List<Seed> seeds = null;
 
 }

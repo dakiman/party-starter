@@ -16,8 +16,10 @@ import lombok.NoArgsConstructor;
 public class Track {
 
     private Album album;
+    @Builder.Default
     private List<Artist> artists = null;
     @JsonProperty("available_markets")
+    @Builder.Default
     private List<Object> availableMarkets = null;
     @JsonProperty("disc_number")
     private Integer discNumber;

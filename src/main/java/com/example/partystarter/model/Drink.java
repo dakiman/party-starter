@@ -29,8 +29,10 @@ public class Drink {
     private String thumbnail;
 
     @OneToMany(mappedBy = "drink", cascade = CascadeType.PERSIST)
+    @Builder.Default
     Set<DrinkIngredient> ingredients = new HashSet<>();
-    //
+    
     @ManyToMany(mappedBy = "drinks")
+    @Builder.Default
     private Set<Party> parties = new HashSet<>();
 }
