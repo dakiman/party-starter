@@ -2,10 +2,10 @@ package com.example.partystarter.service;
 
 import com.example.partystarter.exception.ResourceException;
 import com.example.partystarter.model.*;
-import com.example.partystarter.model.request.PostPartyRequest;
-import com.example.partystarter.model.response.PartyResponse;
+import com.example.partystarter.model.request.PostEventRequest;
+import com.example.partystarter.model.response.EventResponse;
 import com.example.partystarter.repo.DrinkRepository;
-import com.example.partystarter.repo.PartyRepository;
+import com.example.partystarter.repo.EventRepository;
 import com.example.partystarter.utils.ConvertUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,20 +17,20 @@ import java.util.Set;
 
 @Service
 @AllArgsConstructor
-public class PartyService {
-    private final PartyRepository partyRepository;
+public class EventService {
+    private final EventRepository eventRepository;
     private final DrinkRepository drinkRepository;
     private final ArtistService artistService;
 
-    public PartyResponse getParty(Integer id) {
-        Party party = partyRepository
+    public EventResponse getEvent(Integer id) {
+        Event event = eventRepository
                 .findById(id)
-                .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "Cant find party by id"));
+                .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "Cant find event by id"));
 
-        return ConvertUtils.mapPartyToResponse(party);
+        return ConvertUtils.mapEventToResponse(event);
     }
 
-    public PartyResponse saveParty(PostPartyRequest request) {
+    public EventResponse saveEvent(PostEventRequest request) {
         // Validate and get drinks
         List<Drink> drinks = drinkRepository.findAllById(request.getDrinks());
         if (drinks.size() < request.getDrinks().size()) {
@@ -50,9 +50,9 @@ public class PartyService {
                     .build();
         }
 
-        // Build and save party
-        Party party = Party.builder()
-                .name(request.getName() == null ? "New party" : request.getName())
+        // Build and save event
+        Event event = Event.builder()
+                .name(request.getName() == null ? "New event" : request.getName())
                 .date(request.getDate())
                 .time(request.getTime())
                 .location(location)
@@ -61,8 +61,7 @@ public class PartyService {
                 .foodItems(request.getFood() != null ? request.getFood() : new ArrayList<>())
                 .build();
 
-        party = partyRepository.save(party);
-        return ConvertUtils.mapPartyToResponse(party);
+        event = eventRepository.save(event);
+        return ConvertUtils.mapEventToResponse(event);
     }
-
-}
+} 

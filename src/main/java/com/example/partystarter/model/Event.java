@@ -20,7 +20,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Party {
+public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -33,23 +33,23 @@ public class Party {
     private Location location;
 
     @ManyToMany
-    @JoinTable(name = "party_artists",
-            joinColumns = @JoinColumn(name = "party_id"),
+    @JoinTable(name = "event_artists",
+            joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "artist_id"))
     @Builder.Default
     private Set<Artist> artists = new HashSet<>();
 
     @ManyToMany
     @JsonIgnore
-    @JoinTable(name = "party_drinks",
-            joinColumns = @JoinColumn(name = "party_id"),
+    @JoinTable(name = "event_drinks",
+            joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "drink_id"))
     @Builder.Default
     private List<Drink> drinks = new ArrayList<>();
 
     @ElementCollection
-    @CollectionTable(name = "party_food_items", 
-                    joinColumns = @JoinColumn(name = "party_id"))
+    @CollectionTable(name = "event_food_items", 
+                    joinColumns = @JoinColumn(name = "event_id"))
     @Column(name = "food_item")
     @Builder.Default
     private List<String> foodItems = new ArrayList<>();
@@ -60,4 +60,4 @@ public class Party {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-}
+} 

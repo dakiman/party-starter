@@ -65,19 +65,19 @@ public class ConvertUtils {
                 .build();
     }
 
-    public static PartyResponse mapPartyToResponse(Party party) {
-        return PartyResponse.builder()
-                .id(party.getId())
-                .name(party.getName())
-                .date(party.getDate())
-                .time(party.getTime())
-                .location(party.getLocation() != null ? PartyResponse.LocationResponse.builder()
-                        .latitude(party.getLocation().getLatitude())
-                        .longitude(party.getLocation().getLongitude())
-                        .description(party.getLocation().getDescription())
+    public static EventResponse mapEventToResponse(Event event) {
+        return EventResponse.builder()
+                .id(event.getId())
+                .name(event.getName())
+                .date(event.getDate())
+                .time(event.getTime())
+                .location(event.getLocation() != null ? EventResponse.LocationResponse.builder()
+                        .latitude(event.getLocation().getLatitude())
+                        .longitude(event.getLocation().getLongitude())
+                        .description(event.getLocation().getDescription())
                         .build() : null)
-                .artists(party.getArtists().stream()
-                        .map(artist -> PartyResponse.ArtistResponse.builder()
+                .artists(event.getArtists().stream()
+                        .map(artist -> EventResponse.ArtistResponse.builder()
                                 .spotifyId(artist.getSpotifyId())
                                 .name(artist.getName())
                                 .images(artist.getImages())
@@ -85,12 +85,12 @@ public class ConvertUtils {
                                 .spotifyUrl(artist.getSpotifyUrl())
                                 .build())
                         .toList())
-                .drinks(party.getDrinks().stream()
+                .drinks(event.getDrinks().stream()
                         .map(ConvertUtils::mapDrinksToResponse)
                         .toList())
-                .food(party.getFoodItems())
-                .createdAt(party.getCreatedAt())
-                .updatedAt(party.getUpdatedAt())
+                .food(event.getFoodItems())
+                .createdAt(event.getCreatedAt())
+                .updatedAt(event.getUpdatedAt())
                 .build();
     }
 

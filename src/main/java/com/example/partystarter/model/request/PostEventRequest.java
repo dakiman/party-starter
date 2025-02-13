@@ -10,7 +10,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Data
-public class PostPartyRequest {
+public class PostEventRequest {
     @Length(min = 3, max = 40)
     private String name;
     
@@ -33,4 +33,4 @@ public class PostPartyRequest {
         private Double lng;
         private String locationDescription;
     }
-}
+} 

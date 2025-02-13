@@ -36,5 +36,5 @@ public class Artist {
 
     @ManyToMany(mappedBy = "artists")
     @Builder.Default
-    private Set<Party> parties = new HashSet<>();
+    private Set<Event> events = new HashSet<>();
 } 

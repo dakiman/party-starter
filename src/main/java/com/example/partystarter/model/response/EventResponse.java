@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PartyResponse {
+public class EventResponse {
     private Integer id;
     private String name;
     private LocalDate date;
@@ -48,4 +48,4 @@ public class PartyResponse {
         private List<String> genres;
         private String spotifyUrl;
     }
-}
+} 
