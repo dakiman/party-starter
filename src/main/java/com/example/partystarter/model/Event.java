@@ -63,4 +63,8 @@ public class Event {
 
     @Builder.Default
     private Boolean isPrivate = false;
+
+    @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private User creator;
 } 

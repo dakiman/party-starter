@@ -6,14 +6,19 @@ import com.example.partystarter.model.request.PostEventRequest;
 import com.example.partystarter.model.response.EventResponse;
 import com.example.partystarter.repo.DrinkRepository;
 import com.example.partystarter.repo.EventRepository;
+import com.example.partystarter.repo.UserRepository;
 import com.example.partystarter.utils.ConvertUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import com.example.partystarter.model.enums.EventFilter;
 
 @Service
 @AllArgsConstructor
@@ -21,6 +26,7 @@ public class EventService {
     private final EventRepository eventRepository;
     private final DrinkRepository drinkRepository;
     private final ArtistService artistService;
+    private final UserRepository userRepository;
 
     public EventResponse getEvent(Integer id) {
         Event event = eventRepository
@@ -31,6 +37,13 @@ public class EventService {
     }
 
     public EventResponse saveEvent(PostEventRequest request) {
+        // Get the authenticated user
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        
+        User user = userRepository.getByUsername(username)
+                .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "User not found"));
+
         // Validate and get drinks
         List<Drink> drinks = drinkRepository.findAllById(request.getDrinks());
         if (drinks.size() < request.getDrinks().size()) {
@@ -60,9 +73,51 @@ public class EventService {
                 .drinks(drinks)
                 .foodItems(request.getFood() != null ? request.getFood() : new ArrayList<>())
                 .isPrivate(request.getIsPrivate() != null ? request.getIsPrivate() : false)
+                .creator(user)
                 .build();
 
         event = eventRepository.save(event);
         return ConvertUtils.mapEventToResponse(event);
     }
+
+    public List<EventResponse> getEvents(EventFilter filter) {
+        switch (filter) {
+            case ME -> {
+                User user = getCurrentUser();
+                return eventRepository.findByCreatorOrderByCreatedAtDesc(user)
+                        .stream()
+                        .map(ConvertUtils::mapEventToResponse)
+                        .toList();
+            }
+            default -> throw new ResourceException(
+                HttpStatus.BAD_REQUEST, 
+                "Unsupported filter type: " + filter
+            );
+        }
+    }
+
+    private User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        
+        return userRepository.getByUsername(username)
+                .orElseThrow(() -> new ResourceException(
+                    HttpStatus.NOT_FOUND, 
+                    "User not found"
+                ));
+    }
+
+    // public List<EventResponse> getMyEvents() {
+    //     // Get the authenticated user
+    //     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    //     String username = ((UserDetails) principal).getUsername();
+        
+    //     User user = userRepository.getByUsername(username)
+    //             .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "User not found"));
+
+    //     return eventRepository.findByCreatorOrderByCreatedAtDesc(user)
+    //             .stream()
+    //             .map(ConvertUtils::mapEventToResponse)
+    //             .toList();
+    // }
 } 
