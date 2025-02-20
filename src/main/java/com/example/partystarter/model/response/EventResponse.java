@@ -23,6 +23,7 @@ public class EventResponse {
     private LocationResponse location;
     private List<ArtistResponse> artists;
     private List<GetDrinksResponseDrink> drinks;
+    private List<GetIngredientsResponseIngredient> ingredients;
     private List<String> food;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

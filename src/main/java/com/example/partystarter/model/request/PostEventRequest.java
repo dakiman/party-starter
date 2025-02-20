@@ -25,6 +25,8 @@ public class PostEventRequest {
     
     private List<Integer> drinks;
     
+    private List<Integer> ingredients;
+    
     private List<String> food;
 
     private Boolean isPrivate;

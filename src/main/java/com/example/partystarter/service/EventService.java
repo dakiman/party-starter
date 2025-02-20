@@ -7,6 +7,7 @@ import com.example.partystarter.model.response.EventResponse;
 import com.example.partystarter.repo.DrinkRepository;
 import com.example.partystarter.repo.EventRepository;
 import com.example.partystarter.repo.UserRepository;
+import com.example.partystarter.repo.IngredientRepository;
 import com.example.partystarter.utils.ConvertUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ import com.example.partystarter.model.enums.EventFilter;
 public class EventService {
     private final EventRepository eventRepository;
     private final DrinkRepository drinkRepository;
+    private final IngredientRepository ingredientRepository;
     private final ArtistService artistService;
     private final UserRepository userRepository;
 
@@ -50,6 +52,15 @@ public class EventService {
             throw new ResourceException(HttpStatus.NOT_FOUND, "Can't find all drinks by id");
         }
 
+        // Validate and get ingredients
+        List<Ingredient> ingredients = new ArrayList<>();
+        if (request.getIngredients() != null && !request.getIngredients().isEmpty()) {
+            ingredients = ingredientRepository.findAllById(request.getIngredients());
+            if (ingredients.size() < request.getIngredients().size()) {
+                throw new ResourceException(HttpStatus.NOT_FOUND, "Can't find all ingredients by id");
+            }
+        }
+
         // Get or create artists
         Set<Artist> artists = artistService.getOrCreateArtists(request.getArtists());
 
@@ -71,6 +82,7 @@ public class EventService {
                 .location(location)
                 .artists(artists)
                 .drinks(drinks)
+                .ingredients(ingredients)
                 .foodItems(request.getFood() != null ? request.getFood() : new ArrayList<>())
                 .isPrivate(request.getIsPrivate() != null ? request.getIsPrivate() : false)
                 .creator(user)

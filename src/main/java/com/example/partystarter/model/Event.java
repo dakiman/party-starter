@@ -47,6 +47,14 @@ public class Event {
     @Builder.Default
     private List<Drink> drinks = new ArrayList<>();
 
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(name = "event_ingredients",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
+    @Builder.Default
+    private List<Ingredient> ingredients = new ArrayList<>();
+
     @ElementCollection
     @CollectionTable(name = "event_food_items", 
                     joinColumns = @JoinColumn(name = "event_id"))
