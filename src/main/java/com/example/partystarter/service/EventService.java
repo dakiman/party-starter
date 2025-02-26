@@ -3,6 +3,7 @@ package com.example.partystarter.service;
 import com.example.partystarter.exception.ResourceException;
 import com.example.partystarter.model.*;
 import com.example.partystarter.model.request.PostEventRequest;
+import com.example.partystarter.model.request.PostEventRequest.LocationRequest;
 import com.example.partystarter.model.response.EventResponse;
 import com.example.partystarter.repo.DrinkRepository;
 import com.example.partystarter.repo.EventRepository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Optional;
 
 import com.example.partystarter.model.enums.EventFilter;
 
@@ -39,73 +41,93 @@ public class EventService {
     }
 
     public EventResponse saveEvent(PostEventRequest request) {
-        // Get the authenticated user
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
+        User user = getCurrentUser();
         
-        User user = userRepository.getByUsername(username)
-                .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "User not found"));
+        List<Drink> drinks = validateAndGetDrinks(request.getDrinks());
+        List<Ingredient> ingredients = validateAndGetIngredients(request.getIngredients());
+        Set<Artist> artists = artistService.getOrCreateArtists(request.getArtists());
+        Location location = createLocationFromRequest(request.getLocation());
+        
+        Event event = buildEventFromRequest(request, user, drinks, ingredients, artists, location);
+        event = eventRepository.save(event);
+        
+        return ConvertUtils.mapEventToResponse(event);
+    }
 
-        // Validate and get drinks
-        List<Drink> drinks = drinkRepository.findAllById(request.getDrinks());
-        if (drinks.size() < request.getDrinks().size()) {
+    public List<EventResponse> getEvents(EventFilter filter) {
+        return switch (filter) {
+            case ME -> getEventsByCreator(getCurrentUser());
+            default -> throw new ResourceException(
+                HttpStatus.BAD_REQUEST, 
+                "Unsupported filter type: " + filter
+            );
+        };
+    }
+
+    private List<Drink> validateAndGetDrinks(List<Integer> drinkIds) {
+        if (drinkIds == null || drinkIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        List<Drink> drinks = drinkRepository.findAllById(drinkIds);
+        if (drinks.size() < drinkIds.size()) {
             throw new ResourceException(HttpStatus.NOT_FOUND, "Can't find all drinks by id");
         }
+        return drinks;
+    }
 
-        // Validate and get ingredients
-        List<Ingredient> ingredients = new ArrayList<>();
-        if (request.getIngredients() != null && !request.getIngredients().isEmpty()) {
-            ingredients = ingredientRepository.findAllById(request.getIngredients());
-            if (ingredients.size() < request.getIngredients().size()) {
-                throw new ResourceException(HttpStatus.NOT_FOUND, "Can't find all ingredients by id");
-            }
+    private List<Ingredient> validateAndGetIngredients(List<Integer> ingredientIds) {
+        if (ingredientIds == null || ingredientIds.isEmpty()) {
+            return new ArrayList<>();
         }
-
-        // Get or create artists
-        Set<Artist> artists = artistService.getOrCreateArtists(request.getArtists());
-
-        // Create location
-        Location location = null;
-        if (request.getLocation() != null) {
-            location = Location.builder()
-                    .latitude(request.getLocation().getLat())
-                    .longitude(request.getLocation().getLng())
-                    .description(request.getLocation().getLocationDescription())
-                    .build();
+        
+        List<Ingredient> ingredients = ingredientRepository.findAllById(ingredientIds);
+        if (ingredients.size() < ingredientIds.size()) {
+            throw new ResourceException(HttpStatus.NOT_FOUND, "Can't find all ingredients by id");
         }
+        return ingredients;
+    }
 
-        // Build and save event
-        Event event = Event.builder()
-                .name(request.getName() == null ? "New event" : request.getName())
+    private Location createLocationFromRequest(LocationRequest locationRequest) {
+        if (locationRequest == null) {
+            return null;
+        }
+        
+        return Location.builder()
+                .latitude(locationRequest.getLat())
+                .longitude(locationRequest.getLng())
+                .description(locationRequest.getLocationDescription())
+                .build();
+    }
+
+    private Event buildEventFromRequest(
+            PostEventRequest request, 
+            User creator,
+            List<Drink> drinks, 
+            List<Ingredient> ingredients, 
+            Set<Artist> artists,
+            Location location) {
+        
+        return Event.builder()
+                .name(Optional.ofNullable(request.getName()).orElse("New event"))
                 .date(request.getDate())
                 .time(request.getTime())
                 .location(location)
                 .artists(artists)
                 .drinks(drinks)
                 .ingredients(ingredients)
-                .foodItems(request.getFood() != null ? request.getFood() : new ArrayList<>())
-                .isPrivate(request.getIsPrivate() != null ? request.getIsPrivate() : false)
-                .creator(user)
+                .foodItems(Optional.ofNullable(request.getFood()).orElse(new ArrayList<>()))
+                .isPrivate(Optional.ofNullable(request.getIsPrivate()).orElse(false))
+                .creator(creator)
                 .build();
-
-        event = eventRepository.save(event);
-        return ConvertUtils.mapEventToResponse(event);
     }
 
-    public List<EventResponse> getEvents(EventFilter filter) {
-        switch (filter) {
-            case ME -> {
-                User user = getCurrentUser();
-                return eventRepository.findByCreatorOrderByCreatedAtDesc(user)
-                        .stream()
-                        .map(ConvertUtils::mapEventToResponse)
-                        .toList();
-            }
-            default -> throw new ResourceException(
-                HttpStatus.BAD_REQUEST, 
-                "Unsupported filter type: " + filter
-            );
-        }
+
+    private List<EventResponse> getEventsByCreator(User creator) {
+        return eventRepository.findByCreatorOrderByCreatedAtDesc(creator)
+                .stream()
+                .map(ConvertUtils::mapEventToResponse)
+                .toList();
     }
 
     private User getCurrentUser() {
@@ -119,17 +141,4 @@ public class EventService {
                 ));
     }
 
-    // public List<EventResponse> getMyEvents() {
-    //     // Get the authenticated user
-    //     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    //     String username = ((UserDetails) principal).getUsername();
-        
-    //     User user = userRepository.getByUsername(username)
-    //             .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "User not found"));
-
-    //     return eventRepository.findByCreatorOrderByCreatedAtDesc(user)
-    //             .stream()
-    //             .map(ConvertUtils::mapEventToResponse)
-    //             .toList();
-    // }
 } 

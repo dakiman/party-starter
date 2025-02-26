@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 public enum EventFilter {
-    ME("me");  // Future: Add ALL
+    ME("me");  // Future: Add ALL          
 
     private final String value;
 
