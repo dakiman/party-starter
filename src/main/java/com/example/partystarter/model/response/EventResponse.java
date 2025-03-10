@@ -1,6 +1,8 @@
 package com.example.partystarter.model.response;
 
 import com.example.partystarter.model.spotify.ImageResponse;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +21,7 @@ public class EventResponse {
     private Integer id;
     private String name;
     private LocalDate date;
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime time;
     private LocationResponse location;
     private List<ArtistResponse> artists;
@@ -50,4 +53,5 @@ public class EventResponse {
         private List<String> genres;
         private String spotifyUrl;
     }
-} 
+
+}

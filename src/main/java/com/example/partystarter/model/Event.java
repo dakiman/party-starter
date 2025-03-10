@@ -1,5 +1,6 @@
 package com.example.partystarter.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,6 +28,8 @@ public class Event {
 
     private String name;
     private LocalDate date;
+
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime time;
 
     @Embedded
