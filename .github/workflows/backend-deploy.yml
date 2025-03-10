@@ -34,6 +34,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "target/*.jar"
           target: "/tmp"
+          strip_components: 2
 
       - name: Deploy Spring Boot app
         uses: appleboy/ssh-action@master
@@ -43,6 +44,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl stop springapp
-            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S mv /tmp/*.jar /var/www/backend/app.jar
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S mv /tmp/target/*.jar /var/www/backend/app.jar
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start springapp
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl status springapp --no-pager
