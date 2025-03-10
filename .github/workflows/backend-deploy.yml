@@ -43,7 +43,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "${{ secrets.SUDO_PASSWORD }}" | sudo systemctl stop springapp
-            echo "${{ secrets.SUDO_PASSWORD }}" | sudo mv /tmp/*.jar /var/www/backend/app.jar
-            echo "${{ secrets.SUDO_PASSWORD }}" | sudo systemctl start springapp
-            echo "${{ secrets.SUDO_PASSWORD }}" | sudo systemctl status springapp --no-pager
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl stop springapp
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S mv /tmp/*.jar /var/www/backend/app.jar
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start springapp
+            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl status springapp --no-pager
