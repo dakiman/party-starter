@@ -23,7 +23,7 @@ application:
   spotify:
     auth:
       client-id: d0982bc6c139493bbe74eee8d2ddd811
-      client-secret: 71e38651417d4691847c3759f6ee46a4
+      client-secret: ${SPOTIFY_SECRET:123}
       url: https://accounts.spotify.com
     url: https://api.spotify.com
 logging:
