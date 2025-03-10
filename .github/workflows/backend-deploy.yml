@@ -46,6 +46,17 @@ jobs:
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl stop springapp
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S rm -f /var/www/backend/app.jar
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S mv /tmp/*.jar /var/www/backend/app.jar
+            
+            echo "DB_HOST=${{ secrets.DB_HOST }}" | sudo tee /etc/springapp.env
+            echo "DB_NAME=${{ secrets.DB_NAME }}" | sudo tee -a /etc/springapp.env
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" | sudo tee -a /etc/springapp.env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" | sudo tee -a /etc/springapp.env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" | sudo tee -a /etc/springapp.env
+            echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" | sudo tee -a /etc/springapp.env
+            echo "COCKTAIL_DB_API_KEY=${{ secrets.COCKTAIL_DB_API_KEY }}" | sudo tee -a /etc/springapp.env
+            echo "SHOULD_SEED=${{ secrets.SHOULD_SEED }}" | sudo tee -a /etc/springapp.env
+            echo "LOGGING_LEVEL=${{ secrets.LOGGING_LEVEL }}" | sudo tee -a /etc/springapp.env
+            
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl daemon-reload
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start springapp
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl status springapp --no-pager
