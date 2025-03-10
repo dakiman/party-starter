@@ -2,7 +2,7 @@ name: Deploy Spring Boot Backend
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
     paths:
       - 'backend/**'
 
@@ -30,7 +30,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "backend/target/*.jar"
+          source: "target/*.jar"
           target: "/tmp"
           strip_components: 2
 
