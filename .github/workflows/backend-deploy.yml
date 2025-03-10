@@ -56,6 +56,7 @@ jobs:
             echo "COCKTAIL_DB_API_KEY=${{ secrets.COCKTAIL_DB_API_KEY }}" | sudo tee -a /etc/springapp.env
             echo "SHOULD_SEED=${{ secrets.SHOULD_SEED }}" | sudo tee -a /etc/springapp.env
             echo "LOGGING_LEVEL=${{ secrets.LOGGING_LEVEL }}" | sudo tee -a /etc/springapp.env
+            echo "SPOTIFY_SECRET=${{ secrets.SPOTIFY_SECRET }}" | sudo tee -a /etc/springapp.env
             
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl daemon-reload
             echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl start springapp
