@@ -26,34 +26,10 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
     private static final String AUTHORIZATION_HEADER = "Authorization";
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private static final Logger logger = LoggerFactory.getLogger(JWTFilter.class);
 
     private final CustomUserDetailsService userDetailsService;
     private final JWTUtil jwtUtil;
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        // List of public paths that should not be filtered
-        String[] publicPaths = {
-                "/auth/login",
-                "/auth/register",
-                "/drinks", // remove route from public
-                "/music/artists", //remove route from public
-                "/ingredients", //remove route from public
-                "/swagger-ui/**",
-                "/v3/api-docs/**"
-        };
-
-        String path = request.getServletPath();
-
-        for (String pattern : publicPaths) {
-            if (pathMatcher.match(pattern, path)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -64,8 +40,8 @@ public class JWTFilter extends OncePerRequestFilter {
             logger.debug("Processing request to: {} {}", request.getMethod(), request.getRequestURI());
             logger.debug("Authorization header: {}", authHeader != null ? "present" : "missing");
 
-            // If no auth header or not a protected endpoint, continue with chain
-            if (authHeader == null || shouldNotFilter(request)) {
+            // If no auth header, continue with chain
+            if (authHeader == null) {
                 filterChain.doFilter(request, response);
                 return;
             }
