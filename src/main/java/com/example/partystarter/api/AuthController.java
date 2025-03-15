@@ -8,7 +8,7 @@ import com.example.partystarter.model.request.RegisterRequest;
 import com.example.partystarter.model.response.AuthResponse;
 import com.example.partystarter.repo.UserRepository;
 import com.example.partystarter.security.JWTUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,16 +21,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@AllArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private UserRepository userRepo;
-    @Autowired
-    private JWTUtil jwtUtil;
-    @Autowired
-    private AuthenticationManager authManager;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepo;
+    private final JWTUtil jwtUtil;
+    private final AuthenticationManager authManager;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> registerHandler(@RequestBody RegisterRequest request) {

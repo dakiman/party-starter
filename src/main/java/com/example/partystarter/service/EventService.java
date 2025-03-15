@@ -2,13 +2,14 @@ package com.example.partystarter.service;
 
 import com.example.partystarter.exception.ResourceException;
 import com.example.partystarter.model.*;
+import com.example.partystarter.model.enums.EventFilter;
 import com.example.partystarter.model.request.PostEventRequest;
 import com.example.partystarter.model.request.PostEventRequest.LocationRequest;
 import com.example.partystarter.model.response.EventResponse;
 import com.example.partystarter.repo.DrinkRepository;
 import com.example.partystarter.repo.EventRepository;
-import com.example.partystarter.repo.UserRepository;
 import com.example.partystarter.repo.IngredientRepository;
+import com.example.partystarter.repo.UserRepository;
 import com.example.partystarter.utils.ConvertUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,10 +19,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.Optional;
+import java.util.Set;
 
-import com.example.partystarter.model.enums.EventFilter;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 @AllArgsConstructor
@@ -42,15 +43,15 @@ public class EventService {
 
     public EventResponse saveEvent(PostEventRequest request) {
         User user = getCurrentUser();
-        
+
         List<Drink> drinks = validateAndGetDrinks(request.getDrinks());
         List<Ingredient> ingredients = validateAndGetIngredients(request.getIngredients());
         Set<Artist> artists = artistService.getOrCreateArtists(request.getArtists());
         Location location = createLocationFromRequest(request.getLocation());
-        
+
         Event event = buildEventFromRequest(request, user, drinks, ingredients, artists, location);
         event = eventRepository.save(event);
-        
+
         return ConvertUtils.mapEventToResponse(event);
     }
 
@@ -58,17 +59,17 @@ public class EventService {
         return switch (filter) {
             case ME -> getEventsByCreator(getCurrentUser());
             default -> throw new ResourceException(
-                HttpStatus.BAD_REQUEST, 
+                HttpStatus.BAD_REQUEST,
                 "Unsupported filter type: " + filter
             );
         };
     }
 
     private List<Drink> validateAndGetDrinks(List<Integer> drinkIds) {
-        if (drinkIds == null || drinkIds.isEmpty()) {
+        if (isEmpty(drinkIds)) {
             return new ArrayList<>();
         }
-        
+
         List<Drink> drinks = drinkRepository.findAllById(drinkIds);
         if (drinks.size() < drinkIds.size()) {
             throw new ResourceException(HttpStatus.NOT_FOUND, "Can't find all drinks by id");
@@ -77,10 +78,10 @@ public class EventService {
     }
 
     private List<Ingredient> validateAndGetIngredients(List<Integer> ingredientIds) {
-        if (ingredientIds == null || ingredientIds.isEmpty()) {
+        if (isEmpty(ingredientIds)) {
             return new ArrayList<>();
         }
-        
+
         List<Ingredient> ingredients = ingredientRepository.findAllById(ingredientIds);
         if (ingredients.size() < ingredientIds.size()) {
             throw new ResourceException(HttpStatus.NOT_FOUND, "Can't find all ingredients by id");
@@ -89,25 +90,23 @@ public class EventService {
     }
 
     private Location createLocationFromRequest(LocationRequest locationRequest) {
-        if (locationRequest == null) {
-            return null;
-        }
-        
-        return Location.builder()
-                .latitude(locationRequest.getLat())
-                .longitude(locationRequest.getLng())
-                .description(locationRequest.getLocationDescription())
-                .build();
+        return Optional.ofNullable(locationRequest)
+                .map(req -> Location.builder()
+                        .latitude(req.getLat())
+                        .longitude(req.getLng())
+                        .description(req.getLocationDescription())
+                        .build())
+                .orElse(null);
     }
 
     private Event buildEventFromRequest(
-            PostEventRequest request, 
+            PostEventRequest request,
             User creator,
-            List<Drink> drinks, 
-            List<Ingredient> ingredients, 
+            List<Drink> drinks,
+            List<Ingredient> ingredients,
             Set<Artist> artists,
             Location location) {
-        
+
         return Event.builder()
                 .name(Optional.ofNullable(request.getName()).orElse("New event"))
                 .date(request.getDate())
@@ -133,10 +132,10 @@ public class EventService {
     private User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
-        
+
         return userRepository.getByUsername(username)
                 .orElseThrow(() -> new ResourceException(
-                    HttpStatus.NOT_FOUND, 
+                    HttpStatus.NOT_FOUND,
                     "User not found"
                 ));
     }

@@ -1,7 +1,7 @@
 package com.example.partystarter.api;
 
-import com.example.partystarter.model.spotify.SpotifyGetGenresResponse;
 import com.example.partystarter.model.spotify.SearchArtistsResponse;
+import com.example.partystarter.model.spotify.SpotifyGetGenresResponse;
 import com.example.partystarter.service.SpotifySongService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(path = "/music")
+@RequestMapping("/music")
 public class MusicController {
 
     private final SpotifySongService spotifySongService;
 
-    @GetMapping(path = "/genres")
+    @GetMapping("/genres")
     public ResponseEntity<SpotifyGetGenresResponse> getFeaturedPlaylists() {
         return ResponseEntity.ok(spotifySongService.getGenres());
     }
@@ -28,7 +28,7 @@ public class MusicController {
 //        return ResponseEntity.ok(recommendations);
 //    }
 
-    @GetMapping(path = "/artists")
+    @GetMapping("/artists")
     public ResponseEntity<SearchArtistsResponse> searchArtists(@RequestParam String name) {
         return ResponseEntity.ok(spotifySongService.searchArtists(name));
     }
