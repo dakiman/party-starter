@@ -11,18 +11,18 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/drinks")
+@RequestMapping("/drinks")
 @AllArgsConstructor
 public class DrinkController {
 
     private final DrinksService drinksService;
 
-    @GetMapping(path = "", params = {"ingredients"}) // params required for overloading endpoint
+    @GetMapping(params = {"ingredients"}) // params required for overloading endpoint
     public ResponseEntity<GetDrinksResponse> getDrinksByIngredients(@RequestParam List<String> ingredients) {
         return ResponseEntity.ok(drinksService.getDrinksForIngredients(ingredients));
     }
 
-    @GetMapping(path = "")
+    @GetMapping
     public ResponseEntity<GetDrinksResponse> getAllDrinks() {
         return ResponseEntity.ok(drinksService.getAllDrinks());
     }

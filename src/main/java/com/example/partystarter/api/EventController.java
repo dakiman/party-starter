@@ -15,22 +15,22 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 @RestController
-@RequestMapping(path = "/events")
+@RequestMapping("/events")
 public class EventController {
 
     private final EventService eventService;
 
-    @PostMapping(path = "")
+    @PostMapping
     public ResponseEntity<EventResponse> createNewEvent(@Valid @RequestBody PostEventRequest request) {
         return ResponseEntity.ok(eventService.saveEvent(request));
     }
     
-    @GetMapping(path = "/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<EventResponse> getEvent(@PathVariable(value = "id") Integer id) {
         return ResponseEntity.ok(eventService.getEvent(id));
     }
 
-    @GetMapping(path = "")
+    @GetMapping
     public ResponseEntity<List<EventResponse>> getEvents(
             @RequestParam(name = "createdBy") EventFilter filter) {
         return ResponseEntity.ok(eventService.getEvents(filter));

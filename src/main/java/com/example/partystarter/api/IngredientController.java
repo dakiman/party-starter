@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping(path = "/ingredients")
+@RequestMapping("/ingredients")
 @AllArgsConstructor
 public class IngredientController {
 
     private final IngredientsService ingredientsService;
 
-    @GetMapping(path = "")
+    @GetMapping
     public ResponseEntity<GetIngredientsResponse> getAllIngredients(
             @RequestParam(defaultValue = "true") boolean isAlcoholic,
             @RequestParam(required = false) String name) {
