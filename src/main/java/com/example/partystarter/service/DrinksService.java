@@ -1,9 +1,9 @@
 package com.example.partystarter.service;
 
+import com.example.partystarter.model.mapper.DrinkMapper;
 import com.example.partystarter.model.response.GetDrinksResponse;
 import com.example.partystarter.model.response.GetDrinksResponseDrink;
 import com.example.partystarter.repo.DrinkRepository;
-import com.example.partystarter.utils.ConvertUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,25 +18,16 @@ import java.util.*;
 public class DrinksService {
 
     private final DrinkRepository drinkRepository;
+    private final DrinkMapper drinkMapper;
 
     @Cacheable(cacheNames = "drinks")
     public GetDrinksResponse getDrinksForIngredients(List<String> ingredientNames) {
-        List<GetDrinksResponseDrink> responseDrinks = drinkRepository
-                .findDistinctByIngredientsIngredientNameIn(ingredientNames)
+        List<GetDrinksResponseDrink> responseDrinks = Optional.ofNullable(ingredientNames)
+                .map(drinkRepository::findDistinctByIngredientsIngredientNameIn)
+                .orElseGet(drinkRepository::findAll)
                 .stream()
-                .map(ConvertUtils::mapDrinksToResponse)
+                .map(drinkMapper::drinkToGetDrinksResponseDrink)
                 .toList();
-
-        return new GetDrinksResponse(responseDrinks);
-    }
-
-    public GetDrinksResponse getAllDrinks() {
-        List<GetDrinksResponseDrink> responseDrinks = drinkRepository
-                .findAll()
-                .stream()
-                .map(ConvertUtils::mapDrinksToResponse)
-                .toList();
-
         return new GetDrinksResponse(responseDrinks);
     }
 

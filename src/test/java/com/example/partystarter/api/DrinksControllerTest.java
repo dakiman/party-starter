@@ -44,7 +44,7 @@ public class DrinksControllerTest {
     public void testGetDrinks() throws Exception {
         GetDrinksResponse getDrinksResponse = getDrinksResponse();
 
-        when(drinksService.getAllDrinks()).thenReturn(getDrinksResponse);
+        when(drinksService.getDrinksForIngredients(null)).thenReturn(getDrinksResponse);
 
         GetDrinksResponse response = objectMapper.readValue(
                 mockMvc.perform(get("/drinks"))
@@ -52,7 +52,7 @@ public class DrinksControllerTest {
                         .andReturn()
                         .getResponse().getContentAsString(), GetDrinksResponse.class);
 
-        verify(drinksService, times(1)).getAllDrinks();
+        verify(drinksService, times(1)).getDrinksForIngredients(null);
         verifyNoMoreInteractions(drinksService);
 
         assertEquals(response.getDrinks().get(0), getDrinksResponse.getDrinks().get(0));

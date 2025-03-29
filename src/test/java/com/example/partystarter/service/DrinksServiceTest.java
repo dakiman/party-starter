@@ -3,22 +3,21 @@ package com.example.partystarter.service;
 import com.example.partystarter.model.Drink;
 import com.example.partystarter.model.DrinkIngredient;
 import com.example.partystarter.model.Ingredient;
+import com.example.partystarter.model.mapper.DrinkMapper;
 import com.example.partystarter.model.response.GetDrinksResponse;
+import com.example.partystarter.model.response.GetDrinksResponseDrink;
 import com.example.partystarter.repo.DrinkRepository;
-import com.example.partystarter.utils.ConvertUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.example.partystarter.utils.ConvertUtils.mapDrinksToResponse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -29,9 +28,12 @@ public class DrinksServiceTest {
     @Mock
     private DrinkRepository drinkRepository;
 
+    @Mock
+    private DrinkMapper drinkMapper;
+
     @Before
     public void setup() {
-        drinksService = new DrinksService(drinkRepository);
+        drinksService = new DrinksService(drinkRepository, drinkMapper);
     }
 
     @Test
@@ -39,12 +41,25 @@ public class DrinksServiceTest {
         Drink mockDrink = getDrink();
 
         when(drinkRepository.findAll()).thenReturn(Collections.singletonList(mockDrink));
+        GetDrinksResponseDrink responseDrink = getGetDrinksResponseDrink(mockDrink);
+        when(drinkMapper.drinkToGetDrinksResponseDrink(mockDrink)).thenReturn(responseDrink);
 
-        GetDrinksResponse getDrinksResponse = drinksService.getAllDrinks();
+        GetDrinksResponse getDrinksResponse = drinksService.getDrinksForIngredients(null);
+
         verify(drinkRepository, times(1)).findAll();
         verifyNoMoreInteractions(drinkRepository);
 
-        assertEquals(getDrinksResponse.getDrinks().get(0), mapDrinksToResponse(mockDrink));
+        assertEquals(getDrinksResponse.getDrinks().get(0), responseDrink);
+    }
+
+    private static GetDrinksResponseDrink getGetDrinksResponseDrink(Drink mockDrink) {
+        return GetDrinksResponseDrink.builder()
+                .id(mockDrink.getId())
+                .thumbnail(mockDrink.getThumbnail())
+                .name(mockDrink.getName())
+                .isAlcoholic(Boolean.TRUE)
+                .recipe(mockDrink.getRecipe())
+                .build();
     }
 
     public Drink getDrink() {

@@ -3,6 +3,7 @@ package com.example.partystarter.service;
 import com.example.partystarter.exception.ResourceException;
 import com.example.partystarter.model.*;
 import com.example.partystarter.model.enums.EventFilter;
+import com.example.partystarter.model.mapper.EventMapper;
 import com.example.partystarter.model.request.PostEventRequest;
 import com.example.partystarter.model.request.PostEventRequest.LocationRequest;
 import com.example.partystarter.model.response.EventResponse;
@@ -10,7 +11,6 @@ import com.example.partystarter.repo.DrinkRepository;
 import com.example.partystarter.repo.EventRepository;
 import com.example.partystarter.repo.IngredientRepository;
 import com.example.partystarter.repo.UserRepository;
-import com.example.partystarter.utils.ConvertUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,13 +32,14 @@ public class EventService {
     private final IngredientRepository ingredientRepository;
     private final ArtistService artistService;
     private final UserRepository userRepository;
+    private final EventMapper eventMapper;
 
     public EventResponse getEvent(Integer id) {
         Event event = eventRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "Cant find event by id"));
 
-        return ConvertUtils.mapEventToResponse(event);
+        return eventMapper.eventToEventResponse(event);
     }
 
     public EventResponse saveEvent(PostEventRequest request) {
@@ -52,15 +53,15 @@ public class EventService {
         Event event = buildEventFromRequest(request, user, drinks, ingredients, artists, location);
         event = eventRepository.save(event);
 
-        return ConvertUtils.mapEventToResponse(event);
+        return eventMapper.eventToEventResponse(event);
     }
 
     public List<EventResponse> getEvents(EventFilter filter) {
         return switch (filter) {
             case ME -> getEventsByCreator(getCurrentUser());
             default -> throw new ResourceException(
-                HttpStatus.BAD_REQUEST,
-                "Unsupported filter type: " + filter
+                    HttpStatus.BAD_REQUEST,
+                    "Unsupported filter type: " + filter
             );
         };
     }
@@ -125,7 +126,7 @@ public class EventService {
     private List<EventResponse> getEventsByCreator(User creator) {
         return eventRepository.findByCreatorOrderByCreatedAtDesc(creator)
                 .stream()
-                .map(ConvertUtils::mapEventToResponse)
+                .map(eventMapper::eventToEventResponse)
                 .toList();
     }
 
@@ -135,8 +136,8 @@ public class EventService {
 
         return userRepository.getByUsername(username)
                 .orElseThrow(() -> new ResourceException(
-                    HttpStatus.NOT_FOUND,
-                    "User not found"
+                        HttpStatus.NOT_FOUND,
+                        "User not found"
                 ));
     }
 

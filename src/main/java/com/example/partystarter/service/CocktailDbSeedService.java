@@ -4,6 +4,8 @@ import com.example.partystarter.model.Drink;
 import com.example.partystarter.model.DrinkIngredient;
 import com.example.partystarter.model.Ingredient;
 import com.example.partystarter.model.cocktail.*;
+import com.example.partystarter.model.mapper.DrinkMapper;
+import com.example.partystarter.model.mapper.IngredientMapper;
 import com.example.partystarter.repo.DrinkRepository;
 import com.example.partystarter.repo.IngredientRepository;
 import com.example.partystarter.service.cocktail.CocktailCaller;
@@ -11,7 +13,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static com.example.partystarter.utils.ConvertUtils.*;
 
@@ -23,6 +27,8 @@ public class CocktailDbSeedService {
     private final CocktailCaller cocktailCaller;
     private final IngredientRepository ingredientRepository;
     private final DrinkRepository drinkRepository;
+    private final IngredientMapper ingredientMapper;
+    private final DrinkMapper drinkMapper;
 
     public void retrieveAndSaveIngredients() {
         GetIngredientsResponse response = cocktailCaller.getAllIngredients();
@@ -60,7 +66,7 @@ public class CocktailDbSeedService {
         }
 
         log.info("Saving new ingredient {}", ingredient.getName());
-        Ingredient newIngredient = mapIngredient(ingredient);
+        Ingredient newIngredient = ingredientMapper.extendedIngredientToIngredient(ingredient);
         ingredientRepository.save(newIngredient);
     }
 
@@ -71,7 +77,7 @@ public class CocktailDbSeedService {
         }
 
         log.info("Saving new Drink with name {}", drink.getStrDrink());
-        Drink newDrink = mapDrink(drink);
+        Drink newDrink = drinkMapper.extendedDrinkToDrink(drink);
 
         Map<String, String> ingredientAmounts = getIngredientsAndAmounts(drink);
         Set<DrinkIngredient> drinkIngredients = new HashSet<>();
