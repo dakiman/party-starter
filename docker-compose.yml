@@ -13,6 +13,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: party-starter
+    init: true
     restart: unless-stopped
     logging: *default-logging
     env_file: .env
@@ -46,7 +47,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_PASSWORD:-changeme}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
       interval: 10s
       timeout: 5s
       retries: 5

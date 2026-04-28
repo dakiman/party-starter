@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/music/**").permitAll() // TODO protect endpoint
+                        .requestMatchers("/actuator/health").permitAll()
                         // Protected endpoints
                         .requestMatchers("/auth/user").authenticated()
                         .requestMatchers("/user/**").authenticated()
