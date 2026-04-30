@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class EventService {
     private final ArtistService artistService;
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public EventResponse getEvent(Integer id) {
         Event event = eventRepository
                 .findById(id)
@@ -41,6 +43,7 @@ public class EventService {
         return ConvertUtils.mapEventToResponse(event);
     }
 
+    @Transactional
     public EventResponse saveEvent(PostEventRequest request) {
         User user = getCurrentUser();
 
@@ -55,6 +58,7 @@ public class EventService {
         return ConvertUtils.mapEventToResponse(event);
     }
 
+    @Transactional(readOnly = true)
     public List<EventResponse> getEvents(EventFilter filter) {
         return switch (filter) {
             case ME -> getEventsByCreator(getCurrentUser());
