@@ -108,6 +108,7 @@ class EventControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.location.longitude").value(21.4254))
                 .andExpect(jsonPath("$.location.description").value("Skopje city center"))
                 .andExpect(jsonPath("$.food.length()").value(2))
+                .andExpect(jsonPath("$.creatorUsername").value("alice"))
                 .andReturn();
 
         JsonNode root = objectMapper.readTree(res.getResponse().getContentAsString());
@@ -159,7 +160,8 @@ class EventControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("Dinner"))
-                .andExpect(jsonPath("$.isPrivate").value(false));
+                .andExpect(jsonPath("$.isPrivate").value(false))
+                .andExpect(jsonPath("$.creatorUsername").value("alice"));
     }
 
     @Test

@@ -87,6 +87,10 @@ Spring Cache. `config/CacheConfig.java` defines named caches (`drinks`, `genres`
 - **Integration tests** extend `BaseIntegrationTest` (Testcontainers MySQL). The class itself is `@Transactional` so test-side repository reads can lazy-load. See `EventControllerIntegrationTest` as the template.
 - **`MusicController` has commented-out `/recommendations`** endpoint — kept for reference; properly wired in Phase 8 (Spotify playlist generation).
 - **`PostEventRequest.drinks: List<Integer>`** is sent as `[]` from FE always — historical artifact; removed in Phase 9 polish.
+- **`EventResponse` includes `creatorUsername`** — populated from `event.getCreator().getUsername()` in `ConvertUtils.mapEventToResponse`. Required by the FE to gate Edit/Delete button visibility. Null-safe: if `creator` is null (should not happen in production), the field is `null`.
+- **`PUT /events/{id}` is a full replace** — all association lists (artists, drinks, ingredients, food) are replaced wholesale, same as create. There is no `PATCH` partial-update endpoint.
+- **`DELETE /events/{id}` uses `eventRepository.delete(entity)`** — not `deleteById`. Must pass the managed entity so JPA cascade rules fire and clear `event_artists`, `event_drinks`, `event_ingredients`, `event_food_items` join/collection rows before removing the parent row.
+- **Creator check uses `getId()` equality, not username** — `event.getCreator().getId().equals(currentUser.getId())` in `EventService.updateEvent` and `deleteEvent`. IDs are `Integer` — use `.equals()`, not `==`.
 
 ## Where to add things
 

@@ -31,6 +31,7 @@ public class EventResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isPrivate;
+    private String creatorUsername;
 
     @Data
     @Builder

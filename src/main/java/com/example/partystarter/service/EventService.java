@@ -5,6 +5,7 @@ import com.example.partystarter.model.*;
 import com.example.partystarter.model.enums.EventFilter;
 import com.example.partystarter.model.request.PostEventRequest;
 import com.example.partystarter.model.request.PostEventRequest.LocationRequest;
+import com.example.partystarter.model.request.PutEventRequest;
 import com.example.partystarter.model.response.EventResponse;
 import com.example.partystarter.repo.DrinkRepository;
 import com.example.partystarter.repo.EventRepository;
@@ -58,6 +59,53 @@ public class EventService {
         return ConvertUtils.mapEventToResponse(event);
     }
 
+    @Transactional
+    public EventResponse updateEvent(Integer id, PutEventRequest request) {
+        Event event = eventRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        User currentUser = getCurrentUser();
+        if (!event.getCreator().getId().equals(currentUser.getId())) {
+            throw new ResourceException(HttpStatus.FORBIDDEN, "You are not the creator of this event");
+        }
+
+        List<Drink> drinks = validateAndGetDrinks(request.getDrinks());
+        List<Ingredient> ingredients = validateAndGetIngredients(request.getIngredients());
+        Set<Artist> artists = artistService.getOrCreateArtists(request.getArtists());
+        Location location = createLocationFromPutRequest(request.getLocation());
+
+        event.setName(Optional.ofNullable(request.getName()).orElse("New event"));
+        event.setDate(request.getDate());
+        event.setTime(request.getTime());
+        event.setLocation(location);
+        event.setArtists(artists);
+        event.setDrinks(drinks);
+        event.setIngredients(ingredients);
+        event.setFoodItems(Optional.ofNullable(request.getFood()).orElse(new ArrayList<>()));
+        event.setIsPrivate(Optional.ofNullable(request.getIsPrivate()).orElse(false));
+
+        event = eventRepository.save(event);
+        return ConvertUtils.mapEventToResponse(event);
+    }
+
+    @Transactional
+    public void deleteEvent(Integer id) {
+        Event event = eventRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        User currentUser = getCurrentUser();
+        if (!event.getCreator().getId().equals(currentUser.getId())) {
+            throw new ResourceException(HttpStatus.FORBIDDEN, "You are not the creator of this event");
+        }
+
+        // Use delete(entity) rather than deleteById so JPA cascade rules fire
+        // on the managed instance, clearing event_artists, event_drinks,
+        // event_ingredients, and event_food_items join/collection rows.
+        eventRepository.delete(event);
+    }
+
     @Transactional(readOnly = true)
     public List<EventResponse> getEvents(EventFilter filter) {
         return switch (filter) {
@@ -94,6 +142,16 @@ public class EventService {
     }
 
     private Location createLocationFromRequest(LocationRequest locationRequest) {
+        return Optional.ofNullable(locationRequest)
+                .map(req -> Location.builder()
+                        .latitude(req.getLat())
+                        .longitude(req.getLng())
+                        .description(req.getLocationDescription())
+                        .build())
+                .orElse(null);
+    }
+
+    private Location createLocationFromPutRequest(PutEventRequest.LocationRequest locationRequest) {
         return Optional.ofNullable(locationRequest)
                 .map(req -> Location.builder()
                         .latitude(req.getLat())

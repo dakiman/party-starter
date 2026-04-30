@@ -8,8 +8,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * Base class for integration tests.
@@ -20,17 +18,27 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  * to prod's. Subclasses get an autowired {@link MockMvc} for issuing requests
  * and an {@link ObjectMapper} for serialising request bodies.
  *
- * The container is reused across all subclasses (static field) so the boot
- * cost is paid once per test JVM. Each test should clean up its own data
- * (or use {@code @Transactional} with rollback) to stay isolated.
+ * <p><b>JVM-singleton container.</b> The container is started in a static
+ * initializer and never explicitly stopped — the JVM (and Testcontainers' Ryuk
+ * reaper) shuts it down at process exit. This is intentional: with the
+ * {@code @Testcontainers} + {@code @Container} per-class lifecycle, the first
+ * test class would stop the container in its {@code @AfterAll}, leaving
+ * subsequent classes with a dead JDBC URL ("Connection refused" through the
+ * Hikari pool). The singleton pattern lets every {@code BaseIntegrationTest}
+ * subclass share one MySQL instance and pays the boot cost once per JVM.
+ *
+ * <p>Each test should clean up its own data (or use {@code @Transactional}
+ * with rollback) to stay isolated across methods AND across classes.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@Testcontainers
 public abstract class BaseIntegrationTest {
 
-    @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0");
+
+    static {
+        MYSQL.start();
+    }
 
     @DynamicPropertySource
     static void datasourceProperties(DynamicPropertyRegistry registry) {
