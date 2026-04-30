@@ -1,0 +1,17 @@
+application:
+  security:
+    jwt-secret: "test-jwt-secret-must-be-at-least-32-characters-long-for-validation-pass"
+    issuer: "PartyStarterTest"
+  spotify:
+    auth:
+      client-id: "test-spotify-client-id-not-real"
+      client-secret: "test-spotify-secret"
+  seeding:
+    should-seed: false
+  cocktail-db:
+    apikey: "1"
+
+logging:
+  level:
+    root: warn
+    com.example.partystarter: info
