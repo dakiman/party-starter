@@ -76,12 +76,15 @@ Spring Cache. `config/CacheConfig.java` defines named caches (`drinks`, `genres`
 
 ## Gotchas
 
-- **Schema is currently managed by `ddl-auto: update`** — Flyway migration is Phase 1 work. Until Flyway lands, manual schema edits will be silently overwritten on app boot.
-- **JWT secret default is `MYJWTSECRET123`** — fail-fast on missing env var is Phase 1 work. Production must set `JWT_SECRET`.
-- **CORS allows all origins** (`SecurityConfig#corsConfigurationSource`) — tightening to env-driven origin list is Phase 1 work.
-- **`/drinks`, `/ingredients`, `/music/**` are unauthenticated** — `// TODO protect endpoint` comments in `SecurityConfig`. Decision pending in Phase 1.
-- **Spotify `client-id` is hardcoded** in `application.yml`. Move to env var in Phase 1.
-- **No tests for `EventService` / `EventController`**. Phase 1 work — adds Testcontainers + integration test base.
+- **Schema is owned by Flyway** (Phase 1). `application.yml` runs `ddl-auto: validate`. Migrations live in `src/main/resources/db/migration/`. Never edit V1; add V2, V3, … instead. The `*_seq` tables created by Hibernate's TABLE generators MUST be seeded with `next_val=1` (V2 does this) — Hibernate does not auto-seed when Flyway owns the schema.
+- **`JWT_SECRET` is required** (no default) and must be ≥ 32 chars. `JWTUtil.@PostConstruct` enforces this on boot.
+- **CORS** is env-driven via `CORS_ALLOWED_ORIGINS` (comma-separated). `SecurityConfig` parses it; default covers Vite dev (5173) and the dakis-server FE container (8094).
+- **Endpoint protection policy** is documented inline in `SecurityConfig#filterChain` (Phase 1 T8). `/drinks/**`, `/ingredients/**`, `/music/**`, `/swagger-ui/**`, `/v3/api-docs/**`, `/actuator/health` are public; everything else requires auth. Rate-limit on the public endpoints is deferred to Phase 9.
+- **Don't remove `/actuator/health` permitAll** — the docker-compose healthcheck will 401 and the container will be unhealthy forever.
+- **Spotify `client-id`** is now env-driven via `SPOTIFY_CLIENT_ID` (default keeps the historical public id).
+- **`EventService`** read methods are `@Transactional(readOnly = true)`; `saveEvent` is `@Transactional`. Without these, lazy collections on `Event` (notably `foodItems`) blow up during DTO mapping.
+- **`ConvertUtils.mapEventToResponse`** wraps `event.getFoodItems()` in `new ArrayList<>(...)` to materialize the lazy proxy inside the session. Don't undo that.
+- **Integration tests** extend `BaseIntegrationTest` (Testcontainers MySQL). The class itself is `@Transactional` so test-side repository reads can lazy-load. See `EventControllerIntegrationTest` as the template.
 - **`MusicController` has commented-out `/recommendations`** endpoint — kept for reference; properly wired in Phase 8 (Spotify playlist generation).
 - **`PostEventRequest.drinks: List<Integer>`** is sent as `[]` from FE always — historical artifact; removed in Phase 9 polish.
 
