@@ -91,7 +91,7 @@ public class ConvertUtils {
                 .ingredients(event.getIngredients().stream()
                         .map(ConvertUtils::mapIngredientsToResponse)
                         .toList())
-                .food(event.getFoodItems())
+                .food(new ArrayList<>(event.getFoodItems()))
                 .createdAt(event.getCreatedAt())
                 .updatedAt(event.getUpdatedAt())
                 .isPrivate(event.getIsPrivate())

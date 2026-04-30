@@ -17,6 +17,9 @@ public class ArtistService {
     private final ArtistRepository artistRepository;
 
     public Set<Artist> getOrCreateArtists(List<ArtistResponse> artistResponses) {
+        if (artistResponses == null) {
+            return new HashSet<>();
+        }
         return artistResponses.stream()
                 .map(this::getOrCreateArtist)
                 .collect(Collectors.toSet());
