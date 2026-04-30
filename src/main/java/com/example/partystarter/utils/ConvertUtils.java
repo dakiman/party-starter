@@ -95,6 +95,7 @@ public class ConvertUtils {
                 .createdAt(event.getCreatedAt())
                 .updatedAt(event.getUpdatedAt())
                 .isPrivate(event.getIsPrivate())
+                .creatorUsername(event.getCreator() != null ? event.getCreator().getUsername() : null)
                 .build();
     }
 
