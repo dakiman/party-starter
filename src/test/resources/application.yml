@@ -6,9 +6,12 @@ application:
     auth:
       client-id: "test-spotify-client-id-not-real"
       client-secret: "test-spotify-secret"
+      url: https://accounts.spotify.com
+    url: https://api.spotify.com
   seeding:
     should-seed: false
   cocktail-db:
+    url: https://www.thecocktaildb.com
     apikey: "1"
 
 logging:
