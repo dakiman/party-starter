@@ -43,18 +43,20 @@ Swagger UI for the host-JVM mode: http://localhost:8080/swagger-ui/index.html
 
 ## Environment variables
 
-| Variable              | Default                | Notes                                       |
-|-----------------------|------------------------|---------------------------------------------|
-| `DB_HOST`             | `localhost:3306`       | MySQL `host:port`. For the bundled compose's MySQL: `localhost:3308` (host-JVM mode) or `mysql:3306` (containerized mode — set automatically by compose). |
-| `DB_NAME`             | `spring_app`           | Database name                               |
-| `DB_USERNAME`         | `root`                 |                                             |
-| `DB_PASSWORD`         | (empty)                |                                             |
-| `JWT_SECRET`          | `MYJWTSECRET123` (dev) | **Required in prod**                        |
-| `JWT_ISSUER`          | `PartyStarterInc`      |                                             |
-| `SHOULD_SEED`         | `false`                | Enable the periodic CocktailDB seed job     |
-| `COCKTAIL_DB_API_KEY` | `1`                    | TheCocktailDB free key                      |
-| `SPOTIFY_SECRET`      | —                      | Required for Spotify integration            |
-| `LOGGING_LEVEL`       | `info`                 |                                             |
+| Variable                | Default                                                | Notes                                                                                         |
+|-------------------------|--------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| `DB_HOST`               | `localhost:3306`                                       | MySQL `host:port`. For the bundled compose's MySQL: `localhost:3308` (host-JVM mode) or `mysql:3306` (containerized mode — set automatically by compose). |
+| `DB_NAME`               | `spring_app`                                           | Database name                                                                                 |
+| `DB_USERNAME`           | `root`                                                 |                                                                                               |
+| `DB_PASSWORD`           | (empty)                                                |                                                                                               |
+| `JWT_SECRET`            | — (REQUIRED)                                           | No default. Boot fails fast if missing or shorter than 32 chars.                              |
+| `JWT_ISSUER`            | `PartyStarterInc`                                      |                                                                                               |
+| `CORS_ALLOWED_ORIGINS`  | `http://localhost:5173,http://localhost:8094`          | Comma-separated allowed origins for CORS                                                      |
+| `SHOULD_SEED`           | `false`                                                | Enable the periodic CocktailDB seed job                                                       |
+| `COCKTAIL_DB_API_KEY`   | `1`                                                    | TheCocktailDB free key                                                                        |
+| `SPOTIFY_CLIENT_ID`     | `d0982bc6c139493bbe74eee8d2ddd811` (existing public id)| Public client id for Spotify Web API                                                          |
+| `SPOTIFY_SECRET`        | —                                                      | Required for Spotify integration                                                              |
+| `LOGGING_LEVEL`         | `info`                                                 |                                                                                               |
 
 Copy `.env.example` to `.env` for local docker compose.
 
