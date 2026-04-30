@@ -1,9 +1,9 @@
 package com.example.partystarter.security;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,6 +27,9 @@ public class SecurityConfig {
     private final JWTFilter filter;
     private final CustomUserDetailsService uds;
 
+    @Value("${application.security.allowed-origins}")
+    private String allowedOriginsCsv;
+
     public SecurityConfig(CustomUserDetailsService uds, JWTFilter filter) {
         this.uds = uds;
         this.filter = filter;
@@ -38,25 +41,35 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> {
-                    // Public endpoints
-                    auth.requestMatchers("/auth/login").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        // ── Public endpoints ─────────────────────────────────
+                        .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/register").permitAll()
-                        .requestMatchers("/drinks").permitAll() // TODO protect endpoint
-                        .requestMatchers("/ingredients").permitAll() // TODO protect endpoint
+
+                        // /drinks and /ingredients are reference-catalogue endpoints with no PII.
+                        // Public read is intentional. Rate limiting is deferred to Phase 9.
+                        .requestMatchers("/drinks/**").permitAll()
+                        .requestMatchers("/ingredients/**").permitAll()
+
+                        // /music/** is a passthrough to Spotify search/genres. Public for now;
+                        // becomes auth-only in Phase 8 once playlists tie to user accounts.
+                        .requestMatchers("/music/**").permitAll()
+
+                        // OpenAPI docs
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/music/**").permitAll() // TODO protect endpoint
+
+                        // Container healthcheck (added in Phase 0; do NOT remove or the
+                        // docker-compose healthcheck on /actuator/health 401s and the
+                        // container is reported unhealthy forever).
                         .requestMatchers("/actuator/health").permitAll()
-                        // Protected endpoints
+
+                        // ── Authenticated endpoints ──────────────────────────
                         .requestMatchers("/auth/user").authenticated()
-                        .requestMatchers("/user/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/parties/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/parties/**").authenticated()
-//                        .requestMatchers("/music/**").authenticated()
-                        // Any other endpoint requires authentication
-                        .anyRequest().authenticated();
-                })
+                        .requestMatchers("/events/**").authenticated()
+
+                        // Default: deny anything not matched above
+                        .anyRequest().authenticated())
                 .userDetailsService(uds)
                 .exceptionHandling(exc -> exc
                     .authenticationEntryPoint((request, response, authException) ->
@@ -80,8 +93,10 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        List<String> allowedOrigins = List.of(allowedOriginsCsv.split("\\s*,\\s*"));
+
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
 

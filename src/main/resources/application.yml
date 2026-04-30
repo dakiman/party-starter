@@ -12,8 +12,9 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 application:
   security:
-    jwt-secret: ${JWT_SECRET:MYJWTSECRET123}
+    jwt-secret: ${JWT_SECRET}            # required; no default — boot fails fast if missing
     issuer: ${JWT_ISSUER:PartyStarterInc}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:8094}
   seeding:
     should-seed: ${SHOULD_SEED:false}
 #    interval: ${SEED_INTERVAL:60000} #cant inject value to fixedRate param on Scheduler
@@ -22,7 +23,7 @@ application:
     apikey: ${COCKTAIL_DB_API_KEY:1} #free API Key is '1'
   spotify:
     auth:
-      client-id: d0982bc6c139493bbe74eee8d2ddd811
+      client-id: ${SPOTIFY_CLIENT_ID:d0982bc6c139493bbe74eee8d2ddd811}
       client-secret: ${SPOTIFY_SECRET:123}
       url: https://accounts.spotify.com
     url: https://api.spotify.com

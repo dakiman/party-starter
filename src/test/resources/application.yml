@@ -2,6 +2,7 @@ application:
   security:
     jwt-secret: "test-jwt-secret-must-be-at-least-32-characters-long-for-validation-pass"
     issuer: "PartyStarterTest"
+    allowed-origins: "http://localhost:5173"
   spotify:
     auth:
       client-id: "test-spotify-client-id-not-real"
