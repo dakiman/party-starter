@@ -2,6 +2,7 @@ package com.example.partystarter.api;
 
 import com.example.partystarter.model.enums.EventFilter;
 import com.example.partystarter.model.request.PostEventRequest;
+import com.example.partystarter.model.request.PutEventRequest;
 import com.example.partystarter.model.response.EventResponse;
 import com.example.partystarter.service.EventService;
 import lombok.AllArgsConstructor;
@@ -36,4 +37,17 @@ public class EventController {
         return ResponseEntity.ok(eventService.getEvents(filter));
     }
 
-} 
+    @PutMapping("/{id}")
+    public ResponseEntity<EventResponse> updateEvent(
+            @PathVariable(value = "id") Integer id,
+            @Valid @RequestBody PutEventRequest request) {
+        return ResponseEntity.ok(eventService.updateEvent(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable(value = "id") Integer id) {
+        eventService.deleteEvent(id);
+        return ResponseEntity.noContent().build();
+    }
+
+}
