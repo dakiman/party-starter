@@ -2,6 +2,7 @@ package com.example.partystarter.service.spotify;
 
 import com.example.partystarter.config.SpotifyTokenFeignConfig;
 import com.example.partystarter.model.spotify.GetRecommendationsResponse;
+import com.example.partystarter.model.spotify.SpotifyArtistTopTracksResponse;
 import com.example.partystarter.model.spotify.SpotifyGetGenresResponse;
 import com.example.partystarter.model.spotify.SpotifySearchResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -29,4 +30,8 @@ public interface SpotifyClient {
     SpotifySearchResponse searchArtists(@RequestParam("q") String query,
                                       @RequestParam("type") String type,
                                       @RequestParam("limit") int limit);
+
+    @GetMapping(value = "/artists/{id}/top-tracks")
+    SpotifyArtistTopTracksResponse getArtistTopTracks(@PathVariable("id") String artistId,
+                                                      @RequestParam("market") String market);
 }
