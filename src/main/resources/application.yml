@@ -15,6 +15,8 @@ application:
     jwt-secret: ${JWT_SECRET}            # required; no default — boot fails fast if missing
     issuer: ${JWT_ISSUER:PartyStarterInc}
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:8094}
+  share:
+    frontend-base-url: ${FRONTEND_BASE_URL:http://localhost:8094}
   seeding:
     should-seed: ${SHOULD_SEED:false}
 #    interval: ${SEED_INTERVAL:60000} #cant inject value to fixedRate param on Scheduler

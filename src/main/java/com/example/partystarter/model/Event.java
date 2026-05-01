@@ -75,7 +75,13 @@ public class Event {
     @Builder.Default
     private Boolean isPrivate = false;
 
+    // columnDefinition pins CHAR(36) so Hibernate's schema-validate doesn't trip
+    // on the VARCHAR-vs-CHAR mismatch that String → @Column(length=36) would default to.
+    @Column(name = "share_token", unique = true, columnDefinition = "char(36)")
+    @JsonIgnore
+    private String shareToken;
+
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private User creator;
-} 
+}

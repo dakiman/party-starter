@@ -92,6 +92,12 @@ Spring Cache. `config/CacheConfig.java` defines named caches (`drinks`, `genres`
 - **`DELETE /events/{id}` uses `eventRepository.delete(entity)`** — not `deleteById`. Must pass the managed entity so JPA cascade rules fire and clear `event_artists`, `event_drinks`, `event_ingredients`, `event_food_items` join/collection rows before removing the parent row.
 - **Creator check uses `getId()` equality, not username** — `event.getCreator().getId().equals(currentUser.getId())` in `EventService.updateEvent` and `deleteEvent`. IDs are `Integer` — use `.equals()`, not `==`.
 
+### Phase 3 — Sharing & discovery (added 2026-05-01)
+
+- New env var: `FRONTEND_BASE_URL` (default `http://localhost:8094`) is required for share-link composition. Add to compose `.env`; force-recreate the `app` container after editing. See [`docs/specs/2026-05-01-phase-3-sharing-discovery-design.md`](../party-docs/specs/2026-05-01-phase-3-sharing-discovery-design.md).
+- New public endpoints: `GET /events/public`, `GET /events/share/{token}`. **`GET /events/{id}` is also now public** at the security layer — `EventService.getEvent` enforces creator-only access for private events. Order in `SecurityConfig` matters: GET-specific permitAll matchers must precede the catch-all `/events/**` authenticated rule.
+- Share token: `event.share_token` is a nullable `CHAR(36)` UUID, lazily issued by `POST /events/{id}/share`, rotated by `POST /events/{id}/share/rotate`. The token is `@JsonIgnore`'d on the entity — never returned in any GET response, only emitted via `ShareLinkResponse`.
+
 ## Where to add things
 
 | What                  | Where                                                                                                                                                                                          |

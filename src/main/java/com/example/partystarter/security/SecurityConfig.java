@@ -2,6 +2,7 @@ package com.example.partystarter.security;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -63,6 +64,15 @@ public class SecurityConfig {
                         // docker-compose healthcheck on /actuator/health 401s and the
                         // container is reported unhealthy forever).
                         .requestMatchers("/actuator/health").permitAll()
+
+                        // ── Phase 3 share + discovery (read-only public) ─────
+                        // Order matters: more-specific patterns must be listed before /events/**.
+                        .requestMatchers(HttpMethod.GET, "/events/public").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/events/share/*").permitAll()
+                        // GET /events/{id} is permitAll at the security layer; the service
+                        // enforces creator-only access for private events. See
+                        // docs/specs/2026-05-01-phase-3-sharing-discovery-design.md §4.8.
+                        .requestMatchers(HttpMethod.GET, "/events/*").permitAll()
 
                         // ── Authenticated endpoints ──────────────────────────
                         .requestMatchers("/auth/user").authenticated()
