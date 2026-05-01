@@ -65,9 +65,9 @@ class EventControllerPublicIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("GET /events/public?q=foo — filters by name LIKE")
     void publicFeed_search() throws Exception {
-        createEvent(aliceJwt, false, "Sunset BBQ",   LocalDate.now().plusDays(1));
-        createEvent(aliceJwt, false, "Brunch Club",  LocalDate.now().plusDays(2));
-        createEvent(aliceJwt, false, "Sunday Roast", LocalDate.now().plusDays(3));
+        createEvent(aliceJwt, false, "Sunset BBQ",   LocalDate.now().plusDays(2));
+        createEvent(aliceJwt, false, "Brunch Club",  LocalDate.now().plusDays(3));
+        createEvent(aliceJwt, false, "Sunday Roast", LocalDate.now().plusDays(4));
 
         mockMvc.perform(get("/events/public").param("q", "sun"))
                 .andExpect(status().isOk())
@@ -97,6 +97,42 @@ class EventControllerPublicIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(get("/events/public").param("size", "999"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size").value(50));
+    }
+
+    @Test
+    @DisplayName("GET /events/public — negative page/size are clamped to safe lower bounds")
+    void publicFeed_clampsLowerBounds() throws Exception {
+        mockMvc.perform(get("/events/public").param("page", "-1").param("size", "-5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size").value(1))   // size clamped to lower bound 1
+                .andExpect(jsonPath("$.number").value(0)); // page clamped to lower bound 0
+    }
+
+    @Test
+    @DisplayName("GET /events/public — null-dated events sorted last (NULLS LAST)")
+    void publicFeed_nullDateOrdering() throws Exception {
+        // The createEvent helper requires a non-null date; the entity allows null,
+        // so we save directly via the repository to exercise the NULLS-LAST ordering.
+        // Note: bypassing EventService skips creator/artist plumbing — we set just
+        // enough to satisfy the FK and the JPQL query.
+        com.example.partystarter.model.User alice = userRepository
+                .getByUsername("alice")
+                .orElseThrow();
+
+        eventRepository.save(com.example.partystarter.model.Event.builder()
+                .name("Z-Last (no date)")
+                .isPrivate(false)
+                .creator(alice)
+                .build());
+        createEvent(aliceJwt, false, "B-First (early)", LocalDate.now().plusDays(2));
+        createEvent(aliceJwt, false, "C-Middle (later)", LocalDate.now().plusDays(10));
+
+        mockMvc.perform(get("/events/public").param("includePast", "true"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(3))
+                .andExpect(jsonPath("$.content[0].name").value("B-First (early)"))
+                .andExpect(jsonPath("$.content[1].name").value("C-Middle (later)"))
+                .andExpect(jsonPath("$.content[2].name").value("Z-Last (no date)"));
     }
 
     private String registerAndGetJwt(String username, String email, String password) throws Exception {

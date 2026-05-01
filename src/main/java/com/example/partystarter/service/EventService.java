@@ -14,7 +14,6 @@ import com.example.partystarter.repo.IngredientRepository;
 import com.example.partystarter.repo.UserRepository;
 import com.example.partystarter.utils.ConvertUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -68,7 +67,9 @@ public class EventService {
             if (currentUser == null) {
                 throw new ResourceException(HttpStatus.UNAUTHORIZED, "Authentication required to view this event");
             }
-            if (!event.getCreator().getId().equals(currentUser.getId())) {
+            User creator = event.getCreator();
+            if (creator == null || !creator.getId().equals(currentUser.getId())) {
+                // creator == null (orphaned legacy row) → no one can claim ownership; 403 is correct.
                 throw new ResourceException(HttpStatus.FORBIDDEN, "You are not the creator of this event");
             }
         }
@@ -276,16 +277,14 @@ public class EventService {
     }
 
     private void persistFreshToken(Event event) {
-        // UUID collisions on a 122-bit random space are vanishingly unlikely;
-        // catch + retry once and propagate after a second collision rather than
-        // looping indefinitely.
-        try {
-            event.setShareToken(UUID.randomUUID().toString());
-            eventRepository.saveAndFlush(event);
-        } catch (DataIntegrityViolationException firstCollision) {
-            event.setShareToken(UUID.randomUUID().toString());
-            eventRepository.saveAndFlush(event);
-        }
+        // UUID collisions on a 122-bit random space are vanishingly unlikely.
+        // We do not retry here: after a DataIntegrityViolationException the
+        // Hibernate session is rollback-only, so a second saveAndFlush in the
+        // same transaction throws TransactionSystemException rather than
+        // succeeding. If a collision ever does happen, surfacing 500 to the
+        // (creator-only) caller is acceptable.
+        event.setShareToken(UUID.randomUUID().toString());
+        eventRepository.saveAndFlush(event);
     }
 
     private ShareLinkResponse buildShareLinkResponse(Event event) {
