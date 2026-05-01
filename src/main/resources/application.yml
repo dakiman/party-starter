@@ -27,6 +27,9 @@ application:
       client-secret: ${SPOTIFY_SECRET:123}
       url: https://accounts.spotify.com
     url: https://api.spotify.com
+  lastfm:
+    url: https://ws.audioscrobbler.com
+    api-key: ${LASTFM_API_KEY:}
 logging:
   level:
     root: ${LOGGING_LEVEL:info}

@@ -10,6 +10,7 @@ import static java.util.Arrays.asList;
 public class CacheConfig implements CacheManagerCustomizer<ConcurrentMapCacheManager> {
     @Override
     public void customize(ConcurrentMapCacheManager cacheManager) {
-        cacheManager.setCacheNames(asList("spotifyToken", "genres", "ingredients", "drinks"));
+        cacheManager.setCacheNames(asList("spotifyToken", "genres", "ingredients", "drinks",
+                "spotifyArtistTopTracks", "lastfmSimilarArtists", "spotifyArtistByName"));
     }
 }

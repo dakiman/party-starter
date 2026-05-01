@@ -45,6 +45,44 @@ public class SpotifyCaller {
                 .build();
     }
 
+    public ArtistResponse findArtistByName(String name) {
+        try {
+            SpotifySearchResponse response = spotifyClient.searchArtists(name, "artist", 1);
+            SpotifyArtist[] items = response.getArtists().getItems();
+            if (items.length == 0) return null;
+            return mapToArtistResponse(items[0]);
+        } catch (Exception e) {
+            log.warn("Spotify findArtistByName failed for '{}': {}", name, e.getMessage());
+            return null;
+        }
+    }
+
+    public TopTracksResponse getArtistTopTracks(String artistId) {
+        SpotifyArtistTopTracksResponse response = spotifyClient.getArtistTopTracks(artistId, "US");
+
+        List<TrackResponse> tracks = response.getTracks().stream()
+                .map(this::mapToTrackResponse)
+                .toList();
+
+        return TopTracksResponse.builder()
+                .tracks(tracks)
+                .build();
+    }
+
+    private TrackResponse mapToTrackResponse(Track track) {
+        String albumImageUrl = null;
+        if (track.getAlbum() != null && track.getAlbum().getImages() != null && !track.getAlbum().getImages().isEmpty()) {
+            List<Image> images = track.getAlbum().getImages();
+            albumImageUrl = images.get(images.size() - 1).getUrl();
+        }
+        return TrackResponse.builder()
+                .id(track.getId())
+                .name(track.getName())
+                .albumImageUrl(albumImageUrl)
+                .durationMs(track.getDurationMs())
+                .build();
+    }
+
     private ArtistResponse mapToArtistResponse(SpotifyArtist artist) {
         return ArtistResponse.builder()
                 .id(artist.getId())
