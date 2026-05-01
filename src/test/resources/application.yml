@@ -14,6 +14,11 @@ application:
   cocktail-db:
     url: https://www.thecocktaildb.com
     apikey: "1"
+  lastfm:
+    url: https://ws.audioscrobbler.com
+    api-key: ""
+  share:
+    frontend-base-url: http://localhost:8094
 
 logging:
   level:

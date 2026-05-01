@@ -75,7 +75,11 @@ public class Event {
     @Builder.Default
     private Boolean isPrivate = false;
 
+    @Column(name = "share_token", unique = true, length = 36)
+    @JsonIgnore
+    private String shareToken;
+
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private User creator;
-} 
+}
