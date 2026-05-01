@@ -7,39 +7,71 @@ import com.example.partystarter.model.request.PostEventRequest;
 import com.example.partystarter.model.request.PostEventRequest.LocationRequest;
 import com.example.partystarter.model.request.PutEventRequest;
 import com.example.partystarter.model.response.EventResponse;
+import com.example.partystarter.model.response.ShareLinkResponse;
 import com.example.partystarter.repo.DrinkRepository;
 import com.example.partystarter.repo.EventRepository;
 import com.example.partystarter.repo.IngredientRepository;
 import com.example.partystarter.repo.UserRepository;
 import com.example.partystarter.utils.ConvertUtils;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
-@AllArgsConstructor
 public class EventService {
     private final EventRepository eventRepository;
     private final DrinkRepository drinkRepository;
     private final IngredientRepository ingredientRepository;
     private final ArtistService artistService;
     private final UserRepository userRepository;
+    private final String frontendBaseUrl;
+
+    public EventService(EventRepository eventRepository,
+                        DrinkRepository drinkRepository,
+                        IngredientRepository ingredientRepository,
+                        ArtistService artistService,
+                        UserRepository userRepository,
+                        @Value("${application.share.frontend-base-url}") String frontendBaseUrl) {
+        this.eventRepository = eventRepository;
+        this.drinkRepository = drinkRepository;
+        this.ingredientRepository = ingredientRepository;
+        this.artistService = artistService;
+        this.userRepository = userRepository;
+        this.frontendBaseUrl = frontendBaseUrl;
+    }
 
     @Transactional(readOnly = true)
     public EventResponse getEvent(Integer id) {
         Event event = eventRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "Cant find event by id"));
+
+        // Public events are readable without auth. Private events are creator-only.
+        if (Boolean.TRUE.equals(event.getIsPrivate())) {
+            User currentUser = getCurrentUserOrNull();
+            if (currentUser == null) {
+                throw new ResourceException(HttpStatus.UNAUTHORIZED, "Authentication required to view this event");
+            }
+            if (!event.getCreator().getId().equals(currentUser.getId())) {
+                throw new ResourceException(HttpStatus.FORBIDDEN, "You are not the creator of this event");
+            }
+        }
 
         return ConvertUtils.mapEventToResponse(event);
     }
@@ -202,4 +234,79 @@ public class EventService {
                 ));
     }
 
-} 
+    @Transactional
+    public ShareLinkResponse issueShareToken(Integer eventId) {
+        Event event = loadEventForCreator(eventId);
+        if (event.getShareToken() == null) {
+            persistFreshToken(event);
+        }
+        return buildShareLinkResponse(event);
+    }
+
+    @Transactional
+    public ShareLinkResponse rotateShareToken(Integer eventId) {
+        Event event = loadEventForCreator(eventId);
+        persistFreshToken(event);
+        return buildShareLinkResponse(event);
+    }
+
+    @Transactional(readOnly = true)
+    public EventResponse getEventByShareToken(String token) {
+        Event event = eventRepository.findByShareToken(token)
+                .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "Share link is invalid or has been revoked"));
+        return ConvertUtils.mapEventToResponse(event);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<EventResponse> getPublicEvents(String q, boolean includePast, Pageable pageable) {
+        LocalDate since = includePast ? null : LocalDate.now();
+        return eventRepository.findPublic(q, since, pageable)
+                .map(ConvertUtils::mapEventToResponse);
+    }
+
+    private Event loadEventForCreator(Integer eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        User currentUser = getCurrentUser();
+        if (!event.getCreator().getId().equals(currentUser.getId())) {
+            throw new ResourceException(HttpStatus.FORBIDDEN, "You are not the creator of this event");
+        }
+        return event;
+    }
+
+    private void persistFreshToken(Event event) {
+        // UUID collisions on a 122-bit random space are vanishingly unlikely;
+        // catch + retry once and propagate after a second collision rather than
+        // looping indefinitely.
+        try {
+            event.setShareToken(UUID.randomUUID().toString());
+            eventRepository.saveAndFlush(event);
+        } catch (DataIntegrityViolationException firstCollision) {
+            event.setShareToken(UUID.randomUUID().toString());
+            eventRepository.saveAndFlush(event);
+        }
+    }
+
+    private ShareLinkResponse buildShareLinkResponse(Event event) {
+        String url = frontendBaseUrl + "/shared/" + event.getShareToken();
+        return new ShareLinkResponse(event.getShareToken(), url);
+    }
+
+    /**
+     * Same as getCurrentUser() but returns null if no authentication is present
+     * (the SecurityContext is empty on permitAll endpoints).
+     */
+    private User getCurrentUserOrNull() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return null;
+        }
+        Object principal = auth.getPrincipal();
+        if (!(principal instanceof UserDetails ud)) {
+            return null;
+        }
+        return userRepository.getByUsername(ud.getUsername()).orElse(null);
+    }
+
+}
