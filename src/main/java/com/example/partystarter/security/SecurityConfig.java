@@ -82,6 +82,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/share/*/request").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/share/*/me").permitAll()
                         .requestMatchers(HttpMethod.GET,  "/events/*/attendees").permitAll()
+                        // PUT /events/{id}/attendees/me must reach the controller so the
+                        // X-Guest-Token path can resolve a guest caller (the controller
+                        // returns 401 itself when no caller can be resolved at all).
+                        .requestMatchers(HttpMethod.PUT,  "/events/*/attendees/me").permitAll()
 
                         // ── Authenticated endpoints ──────────────────────────
                         .requestMatchers("/auth/user").authenticated()
