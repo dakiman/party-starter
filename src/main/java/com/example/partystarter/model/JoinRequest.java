@@ -35,8 +35,10 @@ public class JoinRequest {
     @JoinColumn(name = "requester_guest_id")
     private GuestUser requesterGuest;
 
+    // columnDefinition pins VARCHAR so Hibernate 6's default Java-enum → MySQL-ENUM
+    // mapping doesn't trip schema-validate against the migration's VARCHAR(16) column.
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 16)
+    @Column(nullable = false, columnDefinition = "varchar(16)")
     private JoinRequestStatus status;
 
     @CreationTimestamp
