@@ -98,6 +98,17 @@ Spring Cache. `config/CacheConfig.java` defines named caches (`drinks`, `genres`
 - New public endpoints: `GET /events/public`, `GET /events/share/{token}`. **`GET /events/{id}` is also now public** at the security layer — `EventService.getEvent` enforces creator-only access for private events. Order in `SecurityConfig` matters: GET-specific permitAll matchers must precede the catch-all `/events/**` authenticated rule.
 - Share token: `event.share_token` is a nullable `CHAR(36)` UUID, lazily issued by `POST /events/{id}/share`, rotated by `POST /events/{id}/share/rotate`. The token is `@JsonIgnore`'d on the entity — never returned in any GET response, only emitted via `ShareLinkResponse`.
 
+### Phase 3.5 — Guest identities, join requests, attendees (added 2026-05-01)
+
+- New tables (V4): `guest_user`, `join_request`, `attendee`. Each with XOR `CHECK` constraints (`(user_id IS NULL) <> (guest_id IS NULL)`) so identity is exactly one of User/Guest.
+- New header convention: **`X-Guest-Token: <uuid>`** carries guest identity from the FE. CORS allowed-headers (currently `*`) covers it. Both `Authorization: Bearer` and `X-Guest-Token` may be present on a single request — `CallerResolver` prefers the JWT.
+- New `service/identity/` package: `CallerIdentity` sealed interface + `AuthenticatedUser`/`Guest` records. New service methods accept `CallerIdentity` (or `Optional<CallerIdentity>` for visibility-gated reads), uniform across user vs guest.
+- **Visibility decisions live in services, not in `SecurityConfig`.** `GET /events/{id}/attendees` is `permitAll` at the security layer; `AttendeeService.listAttendees` walks the four-step check (public -> creator -> attendee row -> 403). Same pattern as Phase 3's `GET /events/{id}` privacy gate. `PUT /events/{id}/attendees/me` is also `permitAll` at the security layer so `X-Guest-Token` resolution can run inside the controller; the controller returns 401 itself if no caller resolves.
+- `DiscriminatorGenerator` is behind an interface so tests can stub deterministic colliding values (`GuestUserServiceCollisionTest`). Default `SecureRandomDiscriminatorGenerator` returns `0001..9999`.
+- **`GuestUserService.createNew` retry uses `Propagation.REQUIRES_NEW`** via a `@Lazy` self-reference. Once `saveAndFlush` throws on a uniqueness collision, Hibernate marks the session for rollback and refuses to flush again, so the retry must run in a fresh transaction. Side effect: integration tests for guest flows can NOT use `@Transactional` (the REQUIRES_NEW commit isn't visible to a subsequent read in the outer test snapshot under MySQL REPEATABLE READ); they rely on `@AfterEach` cleanup instead.
+- Phase 5 will read `join_request.decided_at`, `attendee.created_at`/`updated_at` to fire notifications. **Don't squash transitions in this phase** — every status change updates an existing row's timestamp, never delete-then-insert.
+- `Handler.HttpMessageNotReadableException -> 400` is now wired up. Invalid enum values in request bodies (e.g. `{"status":"PARTYING"}`) surface as 400 instead of 500.
+
 ## Where to add things
 
 | What                  | Where                                                                                                                                                                                          |

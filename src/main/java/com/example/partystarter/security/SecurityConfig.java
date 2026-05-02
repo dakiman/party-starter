@@ -74,6 +74,19 @@ public class SecurityConfig {
                         // docs/specs/2026-05-01-phase-3-sharing-discovery-design.md §4.8.
                         .requestMatchers(HttpMethod.GET, "/events/*").permitAll()
 
+                        // ── Phase 3.5 — request submission, viewer-state, attendee list ──
+                        // Order matters: must precede the catch-all /events/** authenticated rule.
+                        // GET /events/{id}/attendees is permitAll at the security layer; visibility
+                        // is enforced inside AttendeeService.listAttendees (same pattern as Phase 3
+                        // /events/{id} privacy gate).
+                        .requestMatchers(HttpMethod.POST, "/share/*/request").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/share/*/me").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/events/*/attendees").permitAll()
+                        // PUT /events/{id}/attendees/me must reach the controller so the
+                        // X-Guest-Token path can resolve a guest caller (the controller
+                        // returns 401 itself when no caller can be resolved at all).
+                        .requestMatchers(HttpMethod.PUT,  "/events/*/attendees/me").permitAll()
+
                         // ── Authenticated endpoints ──────────────────────────
                         .requestMatchers("/auth/user").authenticated()
                         .requestMatchers("/events/**").authenticated()
