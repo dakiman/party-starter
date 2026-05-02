@@ -36,6 +36,14 @@ public class JoinRequestService {
         Event event = eventRepository.findByShareToken(shareToken)
             .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "Share link is invalid or has been revoked"));
 
+        // Creator hitting their own share link — they don't request access to their own event.
+        // Surface as ALREADY_ATTENDING with no attendee row (they ARE the event from the FE's perspective).
+        if (caller instanceof AuthenticatedUser au
+                && event.getCreator() != null
+                && event.getCreator().getId().equals(au.user().getId())) {
+            return new SubmitResult(SubmitOutcome.ALREADY_ATTENDING, null, null);
+        }
+
         // Already attending? short-circuit
         Optional<Attendee> existingAttendee = findAttendee(event, caller);
         if (existingAttendee.isPresent()) {

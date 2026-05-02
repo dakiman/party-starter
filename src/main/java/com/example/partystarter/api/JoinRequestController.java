@@ -38,34 +38,43 @@ public class JoinRequestController {
 
     // ── POST /share/{shareToken}/request ─────────────────────────────────────
 
+    /**
+     * Submit a join request (private events) or claim attendance (public events).
+     *
+     * <p><b>Known limitation — anonymous double-submit race.</b> Two simultaneous
+     * POSTs from the same anonymous browser each allocate a fresh GuestUser. The
+     * unique constraint on guest_user is (display_name, discriminator), not on a
+     * browser session, so duplicate guests can result. FE-side debouncing (the
+     * RequestDialog disables submit while in-flight) is the practical mitigation.
+     */
     @PostMapping("/share/{shareToken}/request")
     public ResponseEntity<JoinRequestResponse> submitRequest(
             @PathVariable String shareToken,
             @RequestBody(required = false) JoinRequestSubmitBody body,
             HttpServletRequest httpRequest) {
 
-        // Verify the share_token resolves to an event before allocating identity.
+        Optional<CallerIdentity> resolved = callerResolver.resolve(httpRequest);
+
+        // Validate the share_token early (before any guest_user creation) so we don't
+        // leak orphan rows if the token is unknown.
+        if (resolved.isPresent()) {
+            // Already-resolved identity (auth'd user OR returning guest) — service handles 404.
+            SubmitResult result = joinRequestService.submit(shareToken, resolved.get());
+            return ResponseEntity.ok(new JoinRequestResponse(null, stateLabel(result.outcome())));
+        }
+
+        // Anonymous: must have a display_name in the body. Validate the share_token
+        // by attempting the lookup before allocating a GuestUser.
+        if (body == null || body.displayName() == null || body.displayName().isBlank()) {
+            throw new ResourceException(HttpStatus.BAD_REQUEST, "Display name is required for guest requests");
+        }
         eventRepository.findByShareToken(shareToken)
             .orElseThrow(() -> new ResourceException(HttpStatus.NOT_FOUND, "Share link is invalid or has been revoked"));
 
-        Optional<CallerIdentity> resolved = callerResolver.resolve(httpRequest);
-        CallerIdentity caller;
-        String newGuestToken = null;
-
-        if (resolved.isPresent()) {
-            caller = resolved.get();
-        } else {
-            // Anonymous → must provide a display name
-            if (body == null || body.displayName() == null || body.displayName().isBlank()) {
-                throw new ResourceException(HttpStatus.BAD_REQUEST, "Display name is required for guest requests");
-            }
-            GuestUser g = guestUserService.createNew(body.displayName(), body.contactNote());
-            caller = new Guest(g);
-            newGuestToken = g.getGuestToken();
-        }
-
+        GuestUser g = guestUserService.createNew(body.displayName(), body.contactNote());
+        CallerIdentity caller = new Guest(g);
         SubmitResult result = joinRequestService.submit(shareToken, caller);
-        return ResponseEntity.ok(new JoinRequestResponse(newGuestToken, stateLabel(result.outcome())));
+        return ResponseEntity.ok(new JoinRequestResponse(g.getGuestToken(), stateLabel(result.outcome())));
     }
 
     // ── GET /share/{shareToken}/me ───────────────────────────────────────────
@@ -123,7 +132,7 @@ public class JoinRequestController {
     public ResponseEntity<List<PendingRequestResponse>> listRequests(
             @PathVariable Integer id,
             HttpServletRequest httpRequest) {
-        User caller = requireAuthenticatedUser(httpRequest);
+        User caller = callerResolver.requireAuthenticatedUser(httpRequest);
         List<JoinRequest> pending = joinRequestService.listPending(id, caller);
         return ResponseEntity.ok(pending.stream().map(JoinRequestController::toPendingResponse).toList());
     }
@@ -135,7 +144,7 @@ public class JoinRequestController {
             @PathVariable Integer id,
             @PathVariable Long requestId,
             HttpServletRequest httpRequest) {
-        User caller = requireAuthenticatedUser(httpRequest);
+        User caller = callerResolver.requireAuthenticatedUser(httpRequest);
         Attendee a = joinRequestService.approve(id, requestId, caller);
         return ResponseEntity.ok(toAttendeeResponse(a));
     }
@@ -145,19 +154,12 @@ public class JoinRequestController {
             @PathVariable Integer id,
             @PathVariable Long requestId,
             HttpServletRequest httpRequest) {
-        User caller = requireAuthenticatedUser(httpRequest);
+        User caller = callerResolver.requireAuthenticatedUser(httpRequest);
         joinRequestService.decline(id, requestId, caller);
         return ResponseEntity.noContent().build();
     }
 
     // ── helpers ─────────────────────────────────────────────────────────────
-
-    private User requireAuthenticatedUser(HttpServletRequest req) {
-        return callerResolver.resolve(req)
-            .filter(c -> c instanceof AuthenticatedUser)
-            .map(c -> ((AuthenticatedUser) c).user())
-            .orElseThrow(() -> new ResourceException(HttpStatus.UNAUTHORIZED, "Authentication required"));
-    }
 
     private static String stateLabel(SubmitOutcome o) {
         return switch (o) {

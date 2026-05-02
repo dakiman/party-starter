@@ -8,7 +8,6 @@ import com.example.partystarter.model.response.AttendeeResponse;
 import com.example.partystarter.model.response.PendingCountResponse;
 import com.example.partystarter.service.AttendeeService;
 import com.example.partystarter.service.JoinRequestService;
-import com.example.partystarter.service.identity.AuthenticatedUser;
 import com.example.partystarter.service.identity.CallerIdentity;
 import com.example.partystarter.service.identity.CallerResolver;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,10 +51,7 @@ public class AttendeeController {
 
     @GetMapping("/requests/count")
     public ResponseEntity<PendingCountResponse> pendingCount(HttpServletRequest req) {
-        User caller = callerResolver.resolve(req)
-            .filter(c -> c instanceof AuthenticatedUser)
-            .map(c -> ((AuthenticatedUser) c).user())
-            .orElseThrow(() -> new ResourceException(HttpStatus.UNAUTHORIZED, "Authentication required"));
+        User caller = callerResolver.requireAuthenticatedUser(req);
         return ResponseEntity.ok(new PendingCountResponse(joinRequestService.pendingCountForCreator(caller)));
     }
 }

@@ -1,10 +1,12 @@
 package com.example.partystarter.service.identity;
 
+import com.example.partystarter.exception.ResourceException;
 import com.example.partystarter.model.User;
 import com.example.partystarter.repo.GuestUserRepository;
 import com.example.partystarter.repo.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +31,18 @@ public class CallerResolver {
 
     private final UserRepository userRepository;
     private final GuestUserRepository guestUserRepository;
+
+    /**
+     * Resolve the caller identity and require it to be an authenticated User.
+     * Throws 401 if no caller, or 401 if caller is a Guest. Useful for endpoints
+     * gated to logged-in users (e.g., creator-only event operations).
+     */
+    public User requireAuthenticatedUser(HttpServletRequest request) {
+        return resolve(request)
+            .filter(c -> c instanceof AuthenticatedUser)
+            .map(c -> ((AuthenticatedUser) c).user())
+            .orElseThrow(() -> new ResourceException(HttpStatus.UNAUTHORIZED, "Authentication required"));
+    }
 
     public Optional<CallerIdentity> resolve(HttpServletRequest request) {
         Optional<User> authedUser = currentAuthenticatedUser();

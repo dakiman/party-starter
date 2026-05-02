@@ -111,6 +111,24 @@ class JoinRequestSubmitIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("POST /share/{token}/request — creator hitting own share link → already_attending, no row created")
+    void creatorOwnShareToken() throws Exception {
+        mockMvc.perform(post("/share/{token}/request", privateShareToken)
+                .header("Authorization", "Bearer " + aliceJwt)
+                .contentType(MediaType.APPLICATION_JSON).content("{}"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.state").value("already_attending"));
+
+        // No request row, no attendee row created
+        // (Confirming via the BE's pending-list as the auth'd creator)
+        mockMvc.perform(get("/events/{id}/requests",
+                eventRepository.findByShareToken(privateShareToken).orElseThrow().getId())
+                .header("Authorization", "Bearer " + aliceJwt))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
     @DisplayName("POST /share/{token}/request — unknown share token → 404")
     void unknownShareToken() throws Exception {
         String body = objectMapper.writeValueAsString(Map.of("displayName", "Bob"));
